@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from 'lucide-react';
 import { getCalendarDays, formatDate, getNextMonth, getPreviousMonth, getWeekDays } from '../utils/dateUtils';
 import CalendarDay from './CalendarDay';
@@ -14,6 +15,7 @@ const Calendar = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [conflictingEvents, setConflictingEvents] = useState([]);
   const [showConflictNotification, setShowConflictNotification] = useState(false);
+  const [direction, setDirection] = useState('next');
 
   useEffect(() => {
     const loadedEvents = eventsData;
@@ -36,14 +38,17 @@ const Calendar = () => {
   const weekDays = getWeekDays();
 
   const handlePreviousMonth = () => {
+    setDirection('prev');
     setCurrentDate(getPreviousMonth(currentDate));
   };
 
   const handleNextMonth = () => {
+    setDirection('next');
     setCurrentDate(getNextMonth(currentDate));
   };
 
   const handleGoToToday = () => {
+    setDirection(new Date() > currentDate ? 'next' : 'prev');
     setCurrentDate(new Date());
   };
 
@@ -64,7 +69,7 @@ const Calendar = () => {
   return (
     <>
       <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-        {/* Calendar Header */}
+     
         <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
@@ -118,17 +123,44 @@ const Calendar = () => {
         </div>
 
         {/* Calendar Grid */}
-        <div className="grid grid-cols-7">
-          {calendarDays.map((day, index) => (
-            <CalendarDay
-              key={day.toString()}
-              date={day}
-              currentMonth={currentDate}
-              events={events}
-              onEventClick={handleEventClick}
-              isFirstRow={index < 7}
-            />
-          ))}
+        <div className="relative overflow-hidden">
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={currentDate.getMonth()}
+              initial={{
+                y: direction === 'next' ? 30 : -30,
+                opacity: 0,
+              }}
+              animate={{
+                y: 0,
+                opacity: 1,
+                transition: {
+                  duration: 0.4,
+                  ease: [0.4, 0, 0.2, 1],
+                },
+              }}
+              exit={{
+                y: direction === 'next' ? -30 : 30,
+                opacity: 0,
+                transition: {
+                  duration: 0.4,
+                  ease: [0.4, 0, 1, 1],
+                },
+              }}
+              className="grid grid-cols-7"
+            >
+              {calendarDays.map((day, index) => (
+                <CalendarDay
+                  key={day.toString()}
+                  date={day}
+                  currentMonth={currentDate}
+                  events={events}
+                  onEventClick={handleEventClick}
+                  isFirstRow={index < 7}
+                />
+              ))}
+            </motion.div>
+          </AnimatePresence>
         </div>
 
         {/* Event Modal */}
