@@ -14,7 +14,7 @@ import {
 } from '../utils/dateUtils';
 import CalendarDay from './CalendarDay';
 import EventModal from './EventModal';
-import ConflictNotification from './ConflictNotification';
+import ConflictModal from './ConflictModal';
 import { getConflictingEvents } from '../utils/eventUtils';
 import eventsData from '../data/events.json';
 import ViewSwitcher from './ViewSwitcher';
@@ -28,7 +28,7 @@ const Calendar = () => {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [conflictingEvents, setConflictingEvents] = useState([]);
-  const [showConflictNotification, setShowConflictNotification] = useState(false);
+  const [isConflictModalOpen, setIsConflictModalOpen] = useState(false);
   const [direction, setDirection] = useState('next');
   const [currentView, setCurrentView] = useState('month');
 
@@ -40,12 +40,7 @@ const Calendar = () => {
     const conflicts = getConflictingEvents(loadedEvents);
     if (conflicts.length > 0) {
       setConflictingEvents(conflicts);
-      setShowConflictNotification(true);
-
-      // Auto-hide notification after 8 seconds
-      setTimeout(() => {
-        setShowConflictNotification(false);
-      }, 8000);
+      setIsConflictModalOpen(true);
     }
   }, []);
 
@@ -89,8 +84,8 @@ const Calendar = () => {
     setSelectedEvent(null);
   };
 
-  const handleCloseConflictNotification = () => {
-    setShowConflictNotification(false);
+  const handleCloseConflictModal = () => {
+    setIsConflictModalOpen(false);
   };
   const handleViewChange = (view) => {
     setCurrentView(view);
@@ -208,13 +203,12 @@ const Calendar = () => {
         )}
       </div>
 
-      {/* Conflict Notification */}
-      {showConflictNotification && (
-        <ConflictNotification
-          conflictingEvents={conflictingEvents}
-          onClose={handleCloseConflictNotification}
-        />
-      )}
+      {/* Conflict Modal */}
+      <ConflictModal
+        conflictingEvents={conflictingEvents}
+        isOpen={isConflictModalOpen}
+        onClose={handleCloseConflictModal}
+      />
     </>
   );
 };

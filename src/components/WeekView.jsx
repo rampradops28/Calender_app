@@ -35,7 +35,7 @@ const WeekView = ({ currentDate, events, onEventClick, allEvents }) => {
                     {events
                       .filter(event => {
                         const eventDate = new Date(event.date);
-                        const eventHours = parseInt(event.time.split(':')[0]);
+                        const eventHours = parseInt(event.startTime.split(':')[0]);
                         return eventDate.toDateString() === day.toDateString() && eventHours === hour;
                       })
                       .map(event => (

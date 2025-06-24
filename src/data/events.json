@@ -1,155 +1,68 @@
 [
   {
     "id": 1,
-    "title": "Team Standup",
     "date": "2025-06-24",
-    "time": "09:00",
-    "duration": 30,
+    "startTime": "09:00",
+    "endTime": "10:30",
+    "color": "#f6be23",
+    "title": "Daily Standup",
+    "description": "Daily team standup meeting to discuss progress.",
     "type": "work",
-    "description": "Daily team standup meeting to discuss progress and blockers"
+    "duration": 90
   },
   {
     "id": 2,
-    "title": "Project Review",
-    "date": "2025-06-28",
-    "time": "14:00",
-    "duration": 60,
+    "date": "2025-06-24",
+    "startTime": "14:30",
+    "endTime": "15:30",
+    "color": "#f6501e",
+    "title": "Weekly Catchup",
+    "description": "Weekly sync-up with the product team.",
     "type": "work",
-    "description": "Quarterly project review with stakeholders and management"
+    "duration": 60
   },
   {
     "id": 3,
-    "title": "Client Call",
-    "date": "2025-06-30",
-    "time": "14:30",
-    "duration": 45,
+    "date": "2025-06-25",
+    "startTime": "11:00",
+    "endTime": "12:00",
+    "color": "#23f6f6",
+    "title": "Design Review",
+    "description": "Review of the new dashboard design.",
     "type": "work",
-    "description": "Important client discussion about new requirements"
+    "duration": 60
   },
   {
     "id": 4,
-    "title": "Lunch with Sarah",
-    "date": "2025-6-16",
-    "time": "12:30",
-    "duration": 90,
-    "type": "personal",
-    "description": "Catch up lunch at the new Italian restaurant downtown"
+    "date": "2025-06-25",
+    "startTime": "11:30",
+    "endTime": "12:30",
+    "color": "#f61e50",
+    "title": "Frontend Sync",
+    "description": "Sync-up on the frontend implementation.",
+    "type": "work",
+    "duration": 60
   },
-  {
+   {
     "id": 5,
-    "title": "Doctor Appointment",
-    "date": "2025-06-17",
-    "time": "10:00",
-    "duration": 45,
-    "type": "health",
-    "description": "Annual check-up with Dr. Johnson"
+    "date": "2025-06-28",
+    "startTime": "11:30",
+    "endTime": "12:30",
+    "color": "#f61e50",
+    "title": "Frontend Sync",
+    "description": "Sync-up on the frontend implementation.",
+    "type": "work",
+    "duration": 60
   },
-  {
+   {
     "id": 6,
-    "title": "Yoga Class",
-    "date": "2025-01-17",
-    "time": "18:00",
-    "duration": 60,
-    "type": "fitness",
-    "description": "Evening yoga session at the local studio"
-  },
-  {
-    "id": 7,
-    "title": "Team Meeting",
-    "date": "2025-01-17",
-    "time": "18:15",
-    "duration": 30,
+    "date": "2025-06-28",
+    "startTime": "11:30",
+    "endTime": "12:30",
+    "color": "#f61e50",
+    "title": "Frontend Sync",
+    "description": "Sync-up on the frontend implementation.",
     "type": "work",
-    "description": "Overlapping meeting to demonstrate conflict handling"
-  },
-  {
-    "id": 8,
-    "title": "Client Presentation",
-    "date": "2025-01-20",
-    "time": "15:00",
-    "duration": 120,
-    "type": "work",
-    "description": "Product demo presentation for potential new client"
-  },
-  {
-    "id": 9,
-    "title": "Birthday Party",
-    "date": "2025-01-22",
-    "time": "19:00",
-    "duration": 180,
-    "type": "social",
-    "description": "Mike's 30th birthday celebration at the rooftop bar"
-  },
-  {
-    "id": 10,
-    "title": "Code Review",
-    "date": "2025-01-23",
-    "time": "11:00",
-    "duration": 45,
-    "type": "work",
-    "description": "Review pull requests for new feature implementations"
-  },
-  {
-    "id": 11,
-    "title": "Gym Workout",
-    "date": "2025-01-23",
-    "time": "17:30",
-    "duration": 75,
-    "type": "fitness",
-    "description": "Strength training session with personal trainer"
-  },
-  {
-    "id": 12,
-    "title": "Dinner Meeting",
-    "date": "2025-01-23",
-    "time": "18:00",
-    "duration": 90,
-    "type": "work",
-    "description": "Business dinner with potential partners"
-  },
-  {
-    "id": 13,
-    "title": "Weekend Getaway",
-    "date": "2025-01-25",
-    "time": "08:00",
-    "duration": 1440,
-    "type": "travel",
-    "description": "Weekend trip to the mountains for hiking and relaxation"
-  },
-  {
-    "id": 14,
-    "title": "Book Club Meeting",
-    "date": "2025-01-28",
-    "time": "19:30",
-    "duration": 90,
-    "type": "social",
-    "description": "Monthly book club discussion - 'The Seven Husbands of Evelyn Hugo'"
-  },
-  {
-    "id": 15,
-    "title": "Morning Run",
-    "date": "2025-01-29",
-    "time": "06:30",
-    "duration": 45,
-    "type": "fitness",
-    "description": "5K run through Central Park"
-  },
-  {
-    "id": 16,
-    "title": "Conference Call",
-    "date": "2025-01-30",
-    "time": "13:00",
-    "duration": 60,
-    "type": "work",
-    "description": "International team sync meeting with European office"
-  },
-  {
-    "id": 17,
-    "title": "Dentist Appointment",
-    "date": "2025-01-31",
-    "time": "16:00",
-    "duration": 60,
-    "type": "health",
-    "description": "Routine dental cleaning and check-up"
+    "duration": 60
   }
 ]

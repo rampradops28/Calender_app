@@ -1,8 +1,8 @@
 
 import React from 'react';
-import { Clock, Calendar, Tag, AlertCircle } from 'lucide-react';
+import { Clock, Calendar, AlertCircle } from 'lucide-react';
 import { formatDate, parseDate } from '../utils/dateUtils';
-import { getEventTypeColor, formatEventTime, sortEventsByDate, isEventConflicting } from '../utils/eventUtils';
+import { formatEventTime, sortEventsByDate, isEventConflicting } from '../utils/eventUtils';
 
 const ScheduleView = ({ events, onEventClick }) => {
   const today = new Date();
@@ -21,18 +21,6 @@ const ScheduleView = ({ events, onEventClick }) => {
     groups[dateKey].push(event);
     return groups;
   }, {});
-
-  const getEventTypeIcon = (type) => {
-    const icons = {
-      work: '💼',
-      personal: '👤',
-      health: '🏥',
-      fitness: '💪',
-      social: '👥',
-      travel: '✈️'
-    };
-    return icons[type] || '📅';
-  };
 
   if (upcomingEvents.length === 0) {
     return (
@@ -75,7 +63,6 @@ const ScheduleView = ({ events, onEventClick }) => {
 
               <div className="space-y-3">
                 {dayEvents.map((event) => {
-                  const colorClasses = getEventTypeColor(event.type);
                   const hasConflict = isEventConflicting(event, events);
 
                   return (
@@ -87,10 +74,7 @@ const ScheduleView = ({ events, onEventClick }) => {
                       <div className="p-4">
                         <div className="flex items-start justify-between mb-3">
                           <div className="flex items-center space-x-3">
-                            <div className={`
-                              w-4 h-4 rounded-full flex-shrink-0 mt-1
-                              ${colorClasses.split(' ')[0]}
-                            `} />
+                            <div className="w-4 h-4 rounded-full flex-shrink-0 mt-1" style={{ backgroundColor: event.color }} />
                             <div>
                               <h3 className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
                                 {event.title}
@@ -98,12 +82,7 @@ const ScheduleView = ({ events, onEventClick }) => {
                               <div className="flex items-center space-x-4 mt-1">
                                 <div className="flex items-center space-x-1 text-sm text-gray-600">
                                   <Clock className="h-3 w-3" />
-                                  <span>{formatEventTime(event.time, event.duration)}</span>
-                                </div>
-                                <div className="flex items-center space-x-1 text-sm text-gray-600">
-                                  <Tag className="h-3 w-3" />
-                                  <span className="capitalize">{event.type}</span>
-                                  <span className="text-xs">{getEventTypeIcon(event.type)}</span>
+                                  <span>{formatEventTime(event.startTime, event.endTime)}</span>
                                 </div>
                               </div>
                             </div>

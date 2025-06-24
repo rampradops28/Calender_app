@@ -26,7 +26,7 @@ const DayView = ({ currentDate, events, onEventClick, allEvents }) => {
             <div className="flex-1 border-l p-2">
               {dayEvents
                 .filter(event => {
-                  const eventHours = parseInt(event.time.split(':')[0]);
+                  const eventHours = parseInt(event.startTime.split(':')[0]);
                   return eventHours === hour;
                 })
                 .map(event => (
