@@ -8,8 +8,8 @@ export const getEventsForDate = (events, date) => {
 
 export const sortEventsByTime = (events) => {
   return [...events].sort((a, b) => {
-    const timeA = a.time.split(':').map(Number);
-    const timeB = b.time.split(':').map(Number);
+    const timeA = a.startTime.split(':').map(Number);
+    const timeB = b.startTime.split(':').map(Number);
     
     if (timeA[0] !== timeB[0]) {
       return timeA[0] - timeB[0];
@@ -37,14 +37,14 @@ export const getConflictEventColor = (hasConflict) => {
     : '';
 };
 
-export const formatEventTime = (time, duration) => {
-  const [hours, minutes] = time.split(':').map(Number);
-  const startTime = new Date();
-  startTime.setHours(hours, minutes, 0, 0);
-  
-  const endTime = new Date(startTime.getTime() + duration * 60000);
-  
-  const formatTime = (date) => {
+export const formatEventTime = (startTime, endTime) => {
+  const format = (timeStr) => {
+    if (typeof timeStr !== 'string' || !timeStr.includes(':')) {
+      return 'Invalid time';
+    }
+    const [hours, minutes] = timeStr.split(':').map(Number);
+    const date = new Date();
+    date.setHours(hours, minutes, 0, 0);
     return date.toLocaleTimeString('en-US', {
       hour: 'numeric',
       minute: '2-digit',
@@ -52,7 +52,7 @@ export const formatEventTime = (time, duration) => {
     });
   };
   
-  return `${formatTime(startTime)} - ${formatTime(endTime)}`;
+  return `${format(startTime)} - ${format(endTime)}`;
 };
 
 export const hasOverlappingEvents = (events) => {
@@ -123,13 +123,13 @@ export const isEventConflicting = (event, allEvents) => {
 };
 
 const getEventStartTime = (event) => {
-  const [hours, minutes] = event.time.split(':').map(Number);
+  const [hours, minutes] = event.startTime.split(':').map(Number);
   return hours * 60 + minutes;
 };
 
 const getEventEndTime = (event) => {
-  return getEventStartTime(event) + event.duration;
-  
+  const [hours, minutes] = event.endTime.split(':').map(Number);
+  return hours * 60 + minutes;
 };
 export const sortEventsByDate = (events) => {
   return [...events].sort((a, b) => {
