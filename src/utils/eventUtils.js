@@ -115,6 +115,9 @@ export const getConflictingEvents = (events) => {
 };
 
 export const isEventConflicting = (event, allEvents) => {
+  if (!allEvents) {
+    return false;
+  }
   const conflictingEvents = getConflictingEvents(allEvents);
   return conflictingEvents.some(conflictEvent => conflictEvent.id === event.id);
 };
@@ -126,4 +129,12 @@ const getEventStartTime = (event) => {
 
 const getEventEndTime = (event) => {
   return getEventStartTime(event) + event.duration;
+  
+};
+export const sortEventsByDate = (events) => {
+  return [...events].sort((a, b) => {
+    const dateA = new Date(a.date);
+    const dateB = new Date(b.date);
+    return dateA - dateB;
+  });
 };

@@ -1,12 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from 'lucide-react';
-import { getCalendarDays, formatDate, getNextMonth, getPreviousMonth, getWeekDays } from '../utils/dateUtils';
+import {
+  getCalendarDays,
+  formatDate,
+  getNextMonth,
+  getPreviousMonth,
+  getWeekDays,
+  getNextDay,
+  getPreviousDay,
+  getNextWeek,
+  getPreviousWeek
+} from '../utils/dateUtils';
 import CalendarDay from './CalendarDay';
 import EventModal from './EventModal';
 import ConflictNotification from './ConflictNotification';
 import { getConflictingEvents } from '../utils/eventUtils';
 import eventsData from '../data/events.json';
+import ViewSwitcher from './ViewSwitcher';
+import DayView from './DayView';
+import WeekView from './WeekView';
+import ScheduleView from './ScheduleView';
 
 const Calendar = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -16,6 +30,7 @@ const Calendar = () => {
   const [conflictingEvents, setConflictingEvents] = useState([]);
   const [showConflictNotification, setShowConflictNotification] = useState(false);
   const [direction, setDirection] = useState('next');
+  const [currentView, setCurrentView] = useState('month');
 
   useEffect(() => {
     const loadedEvents = eventsData;
@@ -37,14 +52,26 @@ const Calendar = () => {
   const calendarDays = getCalendarDays(currentDate);
   const weekDays = getWeekDays();
 
-  const handlePreviousMonth = () => {
+  const handlePrevious = () => {
     setDirection('prev');
-    setCurrentDate(getPreviousMonth(currentDate));
+    if (currentView === 'month') {
+      setCurrentDate(getPreviousMonth(currentDate));
+    } else if (currentView === 'week') {
+      setCurrentDate(getPreviousWeek(currentDate));
+    } else if (currentView === 'day') {
+      setCurrentDate(getPreviousDay(currentDate));
+    }
   };
 
-  const handleNextMonth = () => {
+  const handleNext = () => {
     setDirection('next');
-    setCurrentDate(getNextMonth(currentDate));
+    if (currentView === 'month') {
+      setCurrentDate(getNextMonth(currentDate));
+    } else if (currentView === 'week') {
+      setCurrentDate(getNextWeek(currentDate));
+    } else if (currentView === 'day') {
+      setCurrentDate(getNextDay(currentDate));
+    }
   };
 
   const handleGoToToday = () => {
@@ -65,7 +92,9 @@ const Calendar = () => {
   const handleCloseConflictNotification = () => {
     setShowConflictNotification(false);
   };
-
+  const handleViewChange = (view) => {
+    setCurrentView(view);
+  };
   return (
     <>
       <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
@@ -85,8 +114,9 @@ const Calendar = () => {
             </div>
 
             <div className="flex items-center space-x-2">
+            <ViewSwitcher currentView={currentView} onViewChange={handleViewChange} />
               <button
-                onClick={handlePreviousMonth}
+                onClick={handlePrevious}
                 className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors duration-200"
                 aria-label="Previous month"
               >
@@ -100,7 +130,7 @@ const Calendar = () => {
                 Today
               </button>
               <button
-                onClick={handleNextMonth}
+                onClick={handleNext}
                 className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors duration-200"
                 aria-label="Next month"
               >
@@ -109,24 +139,10 @@ const Calendar = () => {
             </div>
           </div>
         </div>
-
-        {/* Week Days Header */}
-        <div className="grid grid-cols-7 bg-gray-50 border-b border-gray-200">
-          {weekDays.map((day) => (
-            <div
-              key={day}
-              className="p-4 text-center text-sm font-semibold text-gray-600 uppercase tracking-wider"
-            >
-              {day}
-            </div>
-          ))}
-        </div>
-
-        {/* Calendar Grid */}
         <div className="relative overflow-hidden">
           <AnimatePresence mode="wait" initial={false}>
             <motion.div
-              key={currentDate.getMonth()}
+              key={currentView + currentDate.toString()}
               initial={{
                 y: direction === 'next' ? 30 : -30,
                 opacity: 0,
@@ -147,18 +163,36 @@ const Calendar = () => {
                   ease: [0.4, 0, 1, 1],
                 },
               }}
-              className="grid grid-cols-7"
             >
-              {calendarDays.map((day, index) => (
-                <CalendarDay
-                  key={day.toString()}
-                  date={day}
-                  currentMonth={currentDate}
-                  events={events}
-                  onEventClick={handleEventClick}
-                  isFirstRow={index < 7}
-                />
-              ))}
+              {currentView === 'month' && (
+                <>
+                  <div className="grid grid-cols-7 bg-gray-50 border-b border-gray-200">
+                    {weekDays.map((day) => (
+                      <div
+                        key={day}
+                        className="p-4 text-center text-sm font-semibold text-gray-600 uppercase tracking-wider"
+                      >
+                        {day}
+                      </div>
+                    ))}
+                  </div>
+                  <div className="grid grid-cols-7">
+                    {calendarDays.map((day, index) => (
+                      <CalendarDay
+                        key={day.toString()}
+                        date={day}
+                        currentMonth={currentDate}
+                        events={events}
+                        onEventClick={handleEventClick}
+                        isFirstRow={index < 7}
+                      />
+                    ))}
+                  </div>
+                </>
+              )}
+              {currentView === 'day' && <DayView currentDate={currentDate} events={events} onEventClick={handleEventClick} allEvents={events} />}
+              {currentView === 'week' && <WeekView currentDate={currentDate} events={events} onEventClick={handleEventClick} allEvents={events} />}
+              {currentView === 'schedule' && <ScheduleView events={events} onEventClick={handleEventClick} />}
             </motion.div>
           </AnimatePresence>
         </div>

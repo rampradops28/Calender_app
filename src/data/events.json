@@ -2,7 +2,7 @@
   {
     "id": 1,
     "title": "Team Standup",
-    "date": "2025-01-15",
+    "date": "2025-06-24",
     "time": "09:00",
     "duration": 30,
     "type": "work",
@@ -11,7 +11,7 @@
   {
     "id": 2,
     "title": "Project Review",
-    "date": "2025-01-15",
+    "date": "2025-06-28",
     "time": "14:00",
     "duration": 60,
     "type": "work",
@@ -20,7 +20,7 @@
   {
     "id": 3,
     "title": "Client Call",
-    "date": "2025-01-15",
+    "date": "2025-06-30",
     "time": "14:30",
     "duration": 45,
     "type": "work",
@@ -29,7 +29,7 @@
   {
     "id": 4,
     "title": "Lunch with Sarah",
-    "date": "2025-01-16",
+    "date": "2025-6-16",
     "time": "12:30",
     "duration": 90,
     "type": "personal",
@@ -38,7 +38,7 @@
   {
     "id": 5,
     "title": "Doctor Appointment",
-    "date": "2025-01-17",
+    "date": "2025-06-17",
     "time": "10:00",
     "duration": 45,
     "type": "health",

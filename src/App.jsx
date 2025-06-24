@@ -7,12 +7,13 @@ function App() {
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Google Calendar Clone
+             Calendar App
           </h1>
           <p className="text-gray-600 text-lg">
             Professional calendar application with conflict detection
           </p>
         </div>
+        
         
         <Calendar />
           

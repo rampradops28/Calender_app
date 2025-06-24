@@ -10,8 +10,17 @@ import {
   addMonths,
   subMonths,  
   parseISO,
-  isSameDay
+  isSameDay,
+  addDays,
+  subDays,
+  addWeeks,
+  subWeeks
 } from 'date-fns';
+
+export const getNextDay = (date) => addDays(date, 1);
+export const getPreviousDay = (date) => subDays(date, 1);
+export const getNextWeek = (date) => addWeeks(date, 1);
+export const getPreviousWeek = (date) => subWeeks(date, 1);
 
 export const getCalendarDays = (date) => {
   const monthStart = startOfMonth(date);
