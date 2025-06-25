@@ -37,9 +37,9 @@ const DayPanel = ({ currentDate, events, onEventClick, allEvents }) => {
           const hiddenEventsCount = hourEvents.length - visibleEvents.length;
           return (
             <div key={hour} className="flex border-b h-16 min-h-0">
-              <div className="w-16 text-right pr-2 pt-1 text-sm text-gray-500">
-                {format(new Date().setHours(hour), 'h a')}
-              </div>
+            <div className="w-16 text-right pr-2 pt-1 text-sm text-gray-500">
+              {format(new Date().setHours(hour), 'h a')}
+            </div>
               <div className="flex-1 border-l py-1 px-1 min-h-0 flex flex-col justify-center">
                 {visibleEvents.map(event => (
                   <EventBox
@@ -98,7 +98,7 @@ const DayPanel = ({ currentDate, events, onEventClick, allEvents }) => {
               </ul>
             )}
           </div>
-        </div>
+      </div>
       )}
     </div>
   );

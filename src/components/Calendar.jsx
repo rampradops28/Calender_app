@@ -136,8 +136,8 @@ const Calendar = () => {
     <>
       <div className="bg-white rounded-lg shadow-lg overflow-hidden h-screen flex flex-col gap-4 lg:gap-0 lg:flex-row">
         {/* Calendar section */}
-        <section className="w-full flex flex-col min-h-0 bg-white p-2 sm:p-4 lg:w-[70%] lg:p-6 relative">
-          <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-6 flex-shrink-0 rounded-lg   mb-2">
+        <section className="w-full flex flex-col min-h-0 bg-white p-2 sm:p-4 lg:w-full lg:p-6 relative justify-between h-full max-h-full">
+          <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-4 flex-shrink-0 rounded-lg mb-2">
             <div className="flex items-center space-x-3">
               <CalendarIcon className="h-8 w-8" />
               <div>
@@ -182,12 +182,12 @@ const Calendar = () => {
               >
                 <ChevronRight className="h-5 w-5" />
               </button>
-            </div>
           </div>
+        </div>
 
           {/* Only animate the month view */}
           {currentView === 'month' ? (
-            <div className={`flex-1 flex flex-col min-h-0 relative overflow-hidden ${getAnimationClass()}`}>
+        <div className={`flex-1 flex flex-col min-h-0 relative overflow-hidden ${getAnimationClass()} max-h-full`}>
               <div className="grid grid-cols-7 bg-gray-50 border-b border-gray-200 flex-shrink-0">
                 {weekDays.map((day) => (
                   <div
@@ -198,7 +198,7 @@ const Calendar = () => {
                   </div>
                 ))}
               </div>
-              <div className="grid grid-cols-7 flex-1 min-h-0">
+              <div className="grid grid-cols-7 flex-1 min-h-0 max-h-full">
                 {calendarDays.map((day, index) => (
                   <CalendarCell
                     key={day.toString()}
@@ -210,21 +210,21 @@ const Calendar = () => {
                   />
                 ))}
               </div>
-            </div>
+        </div>
           ) : currentView === 'day' ? (
             <DayPanel currentDate={currentDate} events={events} onEventClick={handleEventClick} allEvents={events} />
           ) : currentView === 'week' ? (
             <WeekPanel currentDate={currentDate} events={events} onEventClick={handleEventClick} allEvents={events} />
           ) : null}
 
-          {isModalOpen && selectedEvent && (
+        {isModalOpen && selectedEvent && (
             <EventPopup
-              event={selectedEvent}
-              isOpen={isModalOpen}
-              onClose={handleCloseModal}
-              allEvents={events}
-            />
-          )}
+            event={selectedEvent}
+            isOpen={isModalOpen}
+            onClose={handleCloseModal}
+            allEvents={events}
+          />
+        )}
         </section>
         {/* Divider for desktop */}
         <div className="hidden lg:block h-full w-px bg-gray-200 shadow-md"></div>

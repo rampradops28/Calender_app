@@ -8,7 +8,6 @@ const WeekPanel = ({ currentDate, events, onEventClick, allEvents }) => {
   const days = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
   const hours = Array.from({ length: 24 }, (_, i) => i);
 
-  // Helper to get events for a day
   const getEventsForDay = (day) =>
     events.filter(event => {
       const eventDate = new Date(event.date);
@@ -24,7 +23,7 @@ const WeekPanel = ({ currentDate, events, onEventClick, allEvents }) => {
           const hasEvents = dayEvents.length > 0;
           return (
             <div key={day} className="p-2 border-b text-center flex flex-col items-center">
-              <p className="text-sm">{format(day, 'EEE')}</p>
+            <p className="text-sm">{format(day, 'EEE')}</p>
               <div className="flex items-center">
                 <button
                   className="text-lg font-semibold focus:outline-none"
@@ -38,7 +37,7 @@ const WeekPanel = ({ currentDate, events, onEventClick, allEvents }) => {
                   <span className="ml-1 w-2 h-2 bg-red-500 rounded-full sm:hidden inline-block" />
                 )}
               </div>
-            </div>
+          </div>
           );
         })}
       </div>
@@ -57,9 +56,9 @@ const WeekPanel = ({ currentDate, events, onEventClick, allEvents }) => {
               <div key={day} className="border-l">
                 {hours.map((hour) => {
                   const hourEvents = events.filter(event => {
-                    const eventDate = new Date(event.date);
-                    const eventHours = parseInt(event.startTime.split(':')[0]);
-                    return eventDate.toDateString() === day.toDateString() && eventHours === hour;
+                        const eventDate = new Date(event.date);
+                        const eventHours = parseInt(event.startTime.split(':')[0]);
+                        return eventDate.toDateString() === day.toDateString() && eventHours === hour;
                   });
                   const visibleEvents = hourEvents.slice(0, 2);
                   const hiddenEventsCount = hourEvents.length - visibleEvents.length;
@@ -82,7 +81,7 @@ const WeekPanel = ({ currentDate, events, onEventClick, allEvents }) => {
                           +{hiddenEventsCount} more
                         </button>
                       )}
-                    </div>
+                  </div>
                   );
                 })}
               </div>

@@ -5,10 +5,10 @@ function EventBox({ event, allEvents, onClick }) {
   const eventDay = parseDate(event.date);
   const start = new Date(`${event.date}T${event.startTime}`);
   const end = new Date(`${event.date}T${event.endTime}`);
-
+  
   const startTime = formatDate(start, 'HH:mm');
   const endTime = formatDate(end, 'HH:mm');
-
+  
   const overlapping = allEvents.filter(e =>
     e.id !== event.id &&
     e.date === event.date &&

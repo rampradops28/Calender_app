@@ -56,7 +56,7 @@ const SchedulePanel = ({ events, onEventClick }) => {
   return (
     <div className="flex-1 flex flex-col h-full">
       <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-4 flex-shrink-0 rounded-lg">
-        <h2 className="text-lg font-semibold">Schedule</h2>
+        <h2 className="text-lg font-semibold">Events</h2>
       </div>
       <div className="p-4 border-b border-gray-200 bg-gray-50">
         {/* Search bar with icon */}
@@ -126,10 +126,10 @@ const SchedulePanel = ({ events, onEventClick }) => {
                             <span className="font-medium text-gray-900 text-sm">
                               {formatEventTime(event.startTime, event.endTime)}
                             </span>
-                          </div>
-                          {hasConflict && (
-                            <div className="flex items-center space-x-1 text-red-500 text-xs font-medium">
-                              <AlertCircle className="h-4 w-4" />
+                            </div>
+                            {hasConflict && (
+                              <div className="flex items-center space-x-1 text-red-500 text-xs font-medium">
+                                <AlertCircle className="h-4 w-4" />
                               <span>Overlap</span>
                             </div>
                           )}
