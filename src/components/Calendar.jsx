@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from 'lucide-react';
 import {
   getCalendarDays,
@@ -31,12 +30,13 @@ const Calendar = () => {
   const [isConflictModalOpen, setIsConflictModalOpen] = useState(false);
   const [direction, setDirection] = useState('next');
   const [currentView, setCurrentView] = useState('month');
+  const [animationState, setAnimationState] = useState('idle');
+  const [isAnimating, setIsAnimating] = useState(false);
 
   useEffect(() => {
     const loadedEvents = eventsData;
     setEvents(loadedEvents);
 
-    // Check for conflicts and show notification
     const conflicts = getConflictingEvents(loadedEvents);
     if (conflicts.length > 0) {
       setConflictingEvents(conflicts);
@@ -48,30 +48,72 @@ const Calendar = () => {
   const weekDays = getWeekDays();
 
   const handlePrevious = () => {
+    if (isAnimating) return;
+    
+    setIsAnimating(true);
     setDirection('prev');
-    if (currentView === 'month') {
-      setCurrentDate(getPreviousMonth(currentDate));
-    } else if (currentView === 'week') {
-      setCurrentDate(getPreviousWeek(currentDate));
-    } else if (currentView === 'day') {
-      setCurrentDate(getPreviousDay(currentDate));
-    }
+    setAnimationState('slide-out-top');
+    
+    setTimeout(() => {
+      if (currentView === 'month') {
+        setCurrentDate(getPreviousMonth(currentDate));
+      } else if (currentView === 'week') {
+        setCurrentDate(getPreviousWeek(currentDate));
+      } else if (currentView === 'day') {
+        setCurrentDate(getPreviousDay(currentDate));
+      }
+      setAnimationState('slide-in-bottom');
+      
+      setTimeout(() => {
+        setAnimationState('idle');
+        setIsAnimating(false);
+      }, 600);
+    }, 400);
   };
 
   const handleNext = () => {
+    if (isAnimating) return;
+    
+    setIsAnimating(true);
     setDirection('next');
-    if (currentView === 'month') {
-      setCurrentDate(getNextMonth(currentDate));
-    } else if (currentView === 'week') {
-      setCurrentDate(getNextWeek(currentDate));
-    } else if (currentView === 'day') {
-      setCurrentDate(getNextDay(currentDate));
-    }
+    setAnimationState('slide-out-bottom');
+    
+    setTimeout(() => {
+      if (currentView === 'month') {
+        setCurrentDate(getNextMonth(currentDate));
+      } else if (currentView === 'week') {
+        setCurrentDate(getNextWeek(currentDate));
+      } else if (currentView === 'day') {
+        setCurrentDate(getNextDay(currentDate));
+      }
+      setAnimationState('slide-in-top');
+      
+      setTimeout(() => {
+        setAnimationState('idle');
+        setIsAnimating(false);
+      }, 600);
+    }, 400);
   };
 
   const handleGoToToday = () => {
-    setDirection(new Date() > currentDate ? 'next' : 'prev');
-    setCurrentDate(new Date());
+    if (isAnimating) return;
+    
+    const today = new Date();
+    const isFuture = today > currentDate;
+    
+    setIsAnimating(true);
+    setDirection(isFuture ? 'next' : 'prev');
+    setAnimationState(isFuture ? 'slide-out-bottom' : 'slide-out-top');
+    
+    setTimeout(() => {
+      setCurrentDate(today);
+      setAnimationState(isFuture ? 'slide-in-top' : 'slide-in-bottom');
+      
+      setTimeout(() => {
+        setAnimationState('idle');
+        setIsAnimating(false);
+      }, 600);
+    }, 400);
   };
 
   const handleEventClick = (event) => {
@@ -87,15 +129,32 @@ const Calendar = () => {
   const handleCloseConflictModal = () => {
     setIsConflictModalOpen(false);
   };
+
   const handleViewChange = (view) => {
     setCurrentView(view);
   };
+
+  const getAnimationClass = () => {
+    switch (animationState) {
+      case 'slide-in-bottom':
+        return 'calendar-slide-in-bottom';
+      case 'slide-in-top':
+        return 'calendar-slide-in-top';
+      case 'slide-out-top':
+        return 'calendar-slide-out-top';
+      case 'slide-out-bottom':
+        return 'calendar-slide-out-bottom';
+      default:
+        return '';
+    }
+  };
+
   return (
     <>
-      <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-     
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-6">
-          <div className="flex items-center justify-between">
+      <div className="bg-white rounded-lg shadow-lg overflow-hidden h-screen flex flex-col gap-4 lg:gap-0 lg:flex-row">
+        {/* Calendar section */}
+        <section className="w-full flex flex-col min-h-0 bg-white p-2 sm:p-4 lg:w-[70%] lg:p-6">
+          <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-6 flex-shrink-0 rounded-lg   mb-2">
             <div className="flex items-center space-x-3">
               <CalendarIcon className="h-8 w-8" />
               <div>
@@ -108,102 +167,89 @@ const Calendar = () => {
               </div>
             </div>
 
-            <div className="flex items-center space-x-2">
-            <ViewSwitcher currentView={currentView} onViewChange={handleViewChange} />
+            <div className="flex items-center justify-center sm:justify-end space-x-3">
+              <ViewSwitcher currentView={currentView} onViewChange={handleViewChange} />
               <button
                 onClick={handlePrevious}
-                className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors duration-200"
-                aria-label="Previous month"
+                disabled={isAnimating}
+                className={`btn-advanced p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors custom-focus ${
+                  isAnimating ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
+                aria-label="Previous"
               >
                 <ChevronLeft className="h-5 w-5" />
               </button>
               <button
                 onClick={handleGoToToday}
-                className="px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors duration-200 font-medium text-white"
+                disabled={isAnimating}
+                className={`btn-advanced px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors font-medium custom-focus ${
+                  isAnimating ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
                 aria-label="Go to today"
               >
                 Today
               </button>
               <button
                 onClick={handleNext}
-                className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors duration-200"
-                aria-label="Next month"
+                disabled={isAnimating}
+                className={`btn-advanced p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors custom-focus ${
+                  isAnimating ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
+                aria-label="Next"
               >
                 <ChevronRight className="h-5 w-5" />
               </button>
             </div>
           </div>
-        </div>
-        <div className="relative overflow-hidden">
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.div
-              key={currentView + currentDate.toString()}
-              initial={{
-                y: direction === 'next' ? 30 : -30,
-                opacity: 0,
-              }}
-              animate={{
-                y: 0,
-                opacity: 1,
-                transition: {
-                  duration: 0.4,
-                  ease: [0.4, 0, 0.2, 1],
-                },
-              }}
-              exit={{
-                y: direction === 'next' ? -30 : 30,
-                opacity: 0,
-                transition: {
-                  duration: 0.4,
-                  ease: [0.4, 0, 1, 1],
-                },
-              }}
-            >
-              {currentView === 'month' && (
-                <>
-                  <div className="grid grid-cols-7 bg-gray-50 border-b border-gray-200">
-                    {weekDays.map((day) => (
-                      <div
-                        key={day}
-                        className="p-4 text-center text-sm font-semibold text-gray-600 uppercase tracking-wider"
-                      >
-                        {day}
-                      </div>
-                    ))}
-                  </div>
-                  <div className="grid grid-cols-7">
-                    {calendarDays.map((day, index) => (
-                      <CalendarDay
-                        key={day.toString()}
-                        date={day}
-                        currentMonth={currentDate}
-                        events={events}
-                        onEventClick={handleEventClick}
-                        isFirstRow={index < 7}
-                      />
-                    ))}
-                  </div>
-                </>
-              )}
-              {currentView === 'day' && <DayView currentDate={currentDate} events={events} onEventClick={handleEventClick} allEvents={events} />}
-              {currentView === 'week' && <WeekView currentDate={currentDate} events={events} onEventClick={handleEventClick} allEvents={events} />}
-              {currentView === 'schedule' && <ScheduleView events={events} onEventClick={handleEventClick} />}
-            </motion.div>
-          </AnimatePresence>
-        </div>
 
-        {/* Event Modal */}
-        {isModalOpen && selectedEvent && (
-          <EventModal
-            event={selectedEvent}
-            isOpen={isModalOpen}
-            onClose={handleCloseModal}
-            allEvents={events}
-          />
-        )}
+          <div className={`flex-1 flex flex-col min-h-0 relative overflow-hidden ${getAnimationClass()}`}>
+            {currentView === 'month' && (
+              <>
+                <div className="grid grid-cols-7 bg-gray-50 border-b border-gray-200 flex-shrink-0">
+                  {weekDays.map((day) => (
+                    <div
+                      key={day}
+                      className="p-4 text-center text-sm font-semibold text-gray-600 uppercase"
+                    >
+                      {day}
+                    </div>
+                  ))}
+                </div>
+                <div className="grid grid-cols-7 flex-1 min-h-0">
+                  {calendarDays.map((day, index) => (
+                    <CalendarDay
+                      key={day.toString()}
+                      date={day}
+                      currentMonth={currentDate}
+                      events={events}
+                      onEventClick={handleEventClick}
+                      isFirstRow={index < 7}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
+            {currentView === 'day' && <DayView currentDate={currentDate} events={events} onEventClick={handleEventClick} allEvents={events} />}
+            {currentView === 'week' && <WeekView currentDate={currentDate} events={events} onEventClick={handleEventClick} allEvents={events} />}
+          </div>
+
+          {isModalOpen && selectedEvent && (
+            <EventModal
+              event={selectedEvent}
+              isOpen={isModalOpen}
+              onClose={handleCloseModal}
+              allEvents={events}
+            />
+          )}
+        </section>
+        {/* Divider for desktop */}
+        <div className="hidden lg:block h-full w-px bg-gray-200 shadow-md"></div>
+        {/* Schedule section */}
+        <section className="w-full flex flex-col bg-gray-50 h-[400px] lg:h-full overflow-y-auto p-2 sm:p-4 lg:w-[30%] lg:p-4">
+          <ScheduleView events={events} onEventClick={handleEventClick} />
+        </section>
       </div>
 
-      {/* Conflict Modal */}
       <ConflictModal
         conflictingEvents={conflictingEvents}
         isOpen={isConflictModalOpen}

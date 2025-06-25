@@ -6,7 +6,6 @@
     "endTime": "10:30",
     "color": "#f6be23",
     "title": "Daily Standup",
-    "description": "Daily team standup meeting to discuss progress.",
     "type": "work",
     "duration": 90
   },
@@ -16,8 +15,7 @@
     "startTime": "14:30",
     "endTime": "15:30",
     "color": "#f6501e",
-    "title": "Weekly Catchup",
-    "description": "Weekly sync-up with the product team.",
+    "title": "Weekly Catchup", 
     "type": "work",
     "duration": 60
   },
@@ -27,8 +25,7 @@
     "startTime": "11:00",
     "endTime": "12:00",
     "color": "#23f6f6",
-    "title": "Design Review",
-    "description": "Review of the new dashboard design.",
+    "title": "Design Review", 
     "type": "work",
     "duration": 60
   },
@@ -38,8 +35,7 @@
     "startTime": "11:30",
     "endTime": "12:30",
     "color": "#f61e50",
-    "title": "Frontend Sync",
-    "description": "Sync-up on the frontend implementation.",
+    "title": "Frontend Sync", 
     "type": "work",
     "duration": 60
   },
@@ -49,8 +45,7 @@
     "startTime": "11:30",
     "endTime": "12:30",
     "color": "#f61e50",
-    "title": "Frontend Sync",
-    "description": "Sync-up on the frontend implementation.",
+    "title": "Frontend Sync", 
     "type": "work",
     "duration": 60
   },
@@ -60,8 +55,17 @@
     "startTime": "11:30",
     "endTime": "12:30",
     "color": "#f61e50",
-    "title": "Frontend Sync",
-    "description": "Sync-up on the frontend implementation.",
+    "title": "Frontend Sync", 
+    "type": "work",
+    "duration": 60
+  },
+  {
+    "id": 7,
+    "date": "2025-06-28",
+    "startTime": "11:30",
+    "endTime": "12:30",
+    "color": "#f61e50",
+    "title": "Frontend Sync", 
     "type": "work",
     "duration": 60
   }

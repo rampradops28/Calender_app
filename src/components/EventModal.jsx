@@ -1,120 +1,98 @@
 import React from 'react';
-import { X, Clock, Calendar, User, AlertTriangle } from 'lucide-react';
-import { formatEventTime, getEventTypeColor, isEventConflicting } from '../utils/eventUtils';
+import { X, Clock, MapPin, User, AlertTriangle } from 'lucide-react';
 import { formatDate, parseDate } from '../utils/dateUtils';
 
-const EventModal = ({ event, allEvents, isOpen, onClose }) => {
-  if (!isOpen) return null;
+const EventModal = ({ event, isOpen, onClose, allEvents }) => {
+  if (!isOpen || !event) return null;
 
-  const colorClasses = getEventTypeColor(event.type);
+  // Create proper Date objects from the event data
   const eventDate = parseDate(event.date);
-  const hasConflict = isEventConflicting(event, allEvents);
+  const startDateTime = new Date(`${event.date}T${event.startTime}`);
+  const endDateTime = new Date(`${event.date}T${event.endTime}`);
+  
+  // Check for conflicts
+  const conflictingEvents = allEvents.filter(otherEvent => 
+    otherEvent.id !== event.id &&
+    otherEvent.date === event.date &&
+    ((otherEvent.startTime < event.endTime && otherEvent.endTime > event.startTime))
+  );
 
-  const getTypeIcon = (type) => {
-    switch (type) {
-      case 'work':
-        return '💼';
-      case 'personal':
-        return '👤';
-      case 'health':
-        return '🏥';
-      case 'fitness':
-        return '💪';
-      case 'social':
-        return '👥';
-      case 'travel':
-        return '✈️';
-      default:
-        return '📅';
-    }
-  };
+  const hasConflict = conflictingEvents.length > 0;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full transform transition-all duration-300 scale-100">
-        {/* Modal Header */}
+    <div className="fixed inset-0 z-50 flex items-center justify-center modal-overlay">
+      <div className="modal-content show bg-white rounded-lg shadow-xl max-w-md w-full mx-4 max-h-[90vh] overflow-hidden">
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <div className="flex items-center space-x-3">
-            <span className="text-2xl">{getTypeIcon(event.type)}</span>
-            <div>
-              <h2 className="text-xl font-bold text-gray-900">{event.title}</h2>
-              <div className="flex items-center space-x-2 mt-1">
-                <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${colorClasses}`}>
-                  {event.type.charAt(0).toUpperCase() + event.type.slice(1)}
-                </span>
-                {hasConflict && (
-                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                    <AlertTriangle className="h-3 w-3 mr-1" />
-                    Conflict
-                  </span>
-                )}
-              </div>
-            </div>
-          </div>
+          <h2 className="text-xl font-semibold text-gray-900">{event.title}</h2>
           <button
             onClick={onClose}
-            className="p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+            className="btn-advanced p-2 rounded-lg hover:bg-gray-100 transition-colors custom-focus"
+            aria-label="Close modal"
           >
-            <X className="h-5 w-5 text-gray-500" />
+            <X className="h-5 w-5" />
           </button>
         </div>
 
-        {/* Modal Body */}
-        <div className="p-6 space-y-4">
-          {/* Conflict Warning */}
+        <div className="p-6 space-y-4 custom-scrollbar max-h-[60vh] overflow-y-auto">
           {hasConflict && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-              <div className="flex items-center space-x-2">
-                <AlertTriangle className="h-4 w-4 text-red-600" />
-                <span className="text-sm font-medium text-red-800">Schedule Conflict</span>
+            <div className="flex items-center space-x-2 p-3 bg-red-50 border border-red-200 rounded-lg">
+              <AlertTriangle className="h-5 w-5 text-red-600" />
+              <div>
+                <p className="text-sm font-medium text-red-800">Schedule Conflict</p>
+                <p className="text-xs text-red-600">
+                  This event overlaps with {conflictingEvents.length} other event(s)
+                </p>
               </div>
-              <p className="text-xs text-red-600 mt-1">
-                This event overlaps with other events on the same day.
-              </p>
             </div>
           )}
 
-          {/* Date and Time */}
-          <div className="flex items-center space-x-3 text-gray-700">
-            <Calendar className="h-5 w-5 text-blue-500" />
+          <div className="flex items-center space-x-3">
+            <Clock className="h-5 w-5 text-blue-600" />
             <div>
-              <div className="font-medium">{formatDate(eventDate, 'EEEE, MMMM d, yyyy')}</div>
-              <div className="text-sm text-gray-500">
-                {formatEventTime(event.time, event.duration)}
-              </div>
+              <p className="text-sm font-medium text-gray-900">
+                {formatDate(eventDate, 'EEEE, MMMM d, yyyy')}
+              </p>
+              <p className="text-sm text-gray-600">
+                {formatDate(startDateTime, 'HH:mm')} - {formatDate(endDateTime, 'HH:mm')}
+              </p>
             </div>
           </div>
 
-          {/* Duration */}
-          <div className="flex items-center space-x-3 text-gray-700">
-            <Clock className="h-5 w-5 text-green-500" />
-            <div>
-              <div className="font-medium">Duration</div>
-              <div className="text-sm text-gray-500">
-                {event.duration} minutes
-              </div>
+          {event.location && (
+            <div className="flex items-center space-x-3">
+              <MapPin className="h-5 w-5 text-green-600" />
+              <p className="text-sm text-gray-700">{event.location}</p>
             </div>
-          </div>
+          )}
 
-          {/* Description */}
-          {event.description && (
-            <div className="flex items-start space-x-3 text-gray-700">
-              <User className="h-5 w-5 text-purple-500 mt-0.5" />
+          {event.attendees && event.attendees.length > 0 && (
+            <div className="flex items-start space-x-3">
+              <User className="h-5 w-5 text-purple-600 mt-0.5" />
               <div>
-                <div className="font-medium">Description</div>
-                <div className="text-sm text-gray-500 mt-1">
-                  {event.description}
+                <p className="text-sm font-medium text-gray-900 mb-1">Attendees</p>
+                <div className="space-y-1">
+                  {event.attendees.map((attendee, index) => (
+                    <p key={index} className="text-sm text-gray-600">
+                      {attendee}
+                    </p>
+                  ))}
                 </div>
               </div>
             </div>
           )}
+
+          {event.description && (
+            <div>
+              <p className="text-sm font-medium text-gray-900 mb-2">Description</p>
+              <p className="text-sm text-gray-700 leading-relaxed">{event.description}</p>
+            </div>
+          )}
         </div>
 
-        {/* Modal Footer */}
-        <div className="p-6 bg-gray-50 rounded-b-2xl">
+        <div className="flex justify-end space-x-3 p-6 border-t border-gray-200">
           <button
             onClick={onClose}
-            className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 transition-colors duration-200"
+            className="btn-advanced px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors font-medium custom-focus"
           >
             Close
           </button>

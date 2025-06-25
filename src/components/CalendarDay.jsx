@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { formatDate, isCurrentMonth, isCurrentDay } from '../utils/dateUtils';
 import {
   getEventsForDate,
@@ -14,74 +14,102 @@ function CalendarDay({
   onEventClick,
   isFirstRow
 }) {
-  // Filter & sort events for this day
+  const [isEventListOpen, setIsEventListOpen] = useState(false);
   const dayEvents = sortEventsByTime(getEventsForDate(events, date));
-
   const isToday = isCurrentDay(date);
   const isInCurrentMonth = isCurrentMonth(date, currentMonth);
   const hasOverlapping = hasOverlappingEvents(dayEvents);
-
-  const visibleEvents = dayEvents.slice(0, 3);
+  const visibleEvents = dayEvents.slice(0, 2);
   const hiddenEventsCount = dayEvents.length - visibleEvents.length;
 
   return (
     <div
       className={`
-        min-h-[120px] p-2 border border-gray-200 bg-white hover:bg-gray-50 
-        transition-colors duration-200 relative group
+        calendar-day h-full p-2 border border-gray-200 bg-white hover:bg-gray-50 
+        transition-colors duration-200 relative group flex flex-col
         ${!isFirstRow ? 'border-t-0' : ''}
       `}
     >
-      {/* Day Header */}
-      <div className="flex items-center justify-between mb-2">
-        <span
-          className={`
-            inline-flex items-center justify-center w-8 h-8 text-sm font-medium rounded-full
-            transition-all duration-200
-            ${
-              isToday
-                ? 'bg-blue-600 text-white shadow-md ring-2 ring-blue-200'
-                : isInCurrentMonth
-                ? 'text-gray-900 hover:bg-gray-100'
-                : 'text-gray-400'
-            }
-          `}
+      <div className="flex items-center justify-between mb-2 flex-shrink-0">
+        <button
+          className={`inline-flex items-center justify-center w-8 h-8 text-sm font-medium rounded-full transition-colors duration-200 focus:outline-none ${isToday ? 'pulse-glow' : ''} ${isToday ? 'bg-blue-600 text-white' : isInCurrentMonth ? 'text-gray-900 hover:bg-gray-100' : 'text-gray-400'}`}
+          onClick={() => setIsEventListOpen(true)}
+          aria-label={`Show events for ${formatDate(date, 'MMMM d')}`}
         >
           {formatDate(date, 'd')}
-        </span>
-
-        {/* Overlapping Events Marker */}
+        </button>
+        {dayEvents.length > 0 && (
+          <span className="ml-1 w-2 h-2 bg-red-500 rounded-full sm:hidden inline-block" />
+        )}
         {hasOverlapping && (
           <div
-            className="w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-sm"
+            className="w-2 h-2 bg-red-500 rounded-full animate-pulse hidden sm:block"
             title="Schedule conflicts detected"
           />
         )}
       </div>
 
-      {/* Events List */}
-      <div className="space-y-1">
-        {visibleEvents.map((event) => (
-          <EventItem
-            key={event.id}
-            event={event}
-            allEvents={events}
-            onClick={() => onEventClick(event)}
-          />
+      <div className="space-y-1 flex-1 overflow-y-auto min-h-0 custom-scrollbar hidden sm:block">
+        {visibleEvents.map((event, index) => (
+          <div key={event.id} className="fade-in-up" style={{ animationDelay: `${index * 0.1}s` }}>
+            <EventItem
+              event={event}
+              allEvents={events}
+              onClick={() => onEventClick(event)}
+            />
+          </div>
         ))}
 
-        {/* Show "+x more" if events exceed 3 */}
         {hiddenEventsCount > 0 && (
-          <div className="text-xs text-gray-500 font-medium px-2 py-1 bg-gray-100 rounded hover:bg-gray-200 transition-colors cursor-pointer">
+          <button
+            className="text-xs text-blue-600 font-medium px-2 py-1 bg-blue-50 rounded hover:bg-blue-100 transition-colors cursor-pointer w-full text-left"
+            onClick={() => setIsEventListOpen(true)}
+            aria-label={`Show ${hiddenEventsCount} more events`}
+          >
             +{hiddenEventsCount} more
-          </div>
+          </button>
         )}
       </div>
 
-      {/* Optional hover effect for empty days */}
       {dayEvents.length === 0 && isInCurrentMonth && (
-        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 hidden sm:flex">
           <div className="text-xs text-gray-400 font-medium">No events</div>
+        </div>
+      )}
+      {isEventListOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+          <div className="bg-white rounded-lg shadow-xl w-11/12 max-w-md mx-auto p-4">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold">Events for {formatDate(date, 'MMMM d')}</h3>
+              <button
+                onClick={() => setIsEventListOpen(false)}
+                className="p-2 rounded hover:bg-gray-100"
+                aria-label="Close event list"
+              >
+                <span className="text-xl">&times;</span>
+              </button>
+            </div>
+            {dayEvents.length === 0 ? (
+              <div className="text-gray-500 text-center">No events</div>
+            ) : (
+              <ul className="space-y-2">
+                {dayEvents.map(event => (
+                  <li key={event.id}>
+                    <button
+                      className="w-full text-left p-2 rounded hover:bg-gray-100"
+                      onClick={() => {
+                        setIsEventListOpen(false);
+                        onEventClick(event);
+                      }}
+                    >
+                      <div className="font-medium">{event.title}</div>
+                      <div className="text-xs text-gray-500">{event.startTime} - {event.endTime}</div>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         </div>
       )}
     </div>

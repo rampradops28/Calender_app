@@ -1,32 +1,49 @@
 import React from 'react';
-import { Clock, AlertTriangle } from 'lucide-react';
-import { formatEventTime, isEventConflicting } from '../utils/eventUtils';
+import { formatDate, parseDate } from '../utils/dateUtils';
 
-const EventItem = ({ event, allEvents, onClick }) => {
-  const hasConflict = isEventConflicting(event, allEvents);
+function EventItem({ event, allEvents, onClick }) {
+  // Create proper Date objects from the event data
+  const eventDate = parseDate(event.date);
+  const startDateTime = new Date(`${event.date}T${event.startTime}`);
+  const endDateTime = new Date(`${event.date}T${event.endTime}`);
+  
+  const startTime = formatDate(startDateTime, 'HH:mm');
+  const endTime = formatDate(endDateTime, 'HH:mm');
+  
+  // Check if this event conflicts with others
+  const conflictingEvents = allEvents.filter(otherEvent => 
+    otherEvent.id !== event.id &&
+    otherEvent.date === event.date &&
+    ((otherEvent.startTime < event.endTime && otherEvent.endTime > event.startTime))
+  );
+
+  const hasConflict = conflictingEvents.length > 0;
 
   return (
     <div
-      onClick={onClick}
       className={`
-        px-2 py-1 rounded-md text-xs cursor-pointer border relative
-        hover:shadow-md transform hover:scale-105 transition-all duration-200
-        ${hasConflict ? 'ring-2 ring-amber-400 bg-amber-50 border-amber-400' : 'bg-blue-50 border-blue-200'}
+        event-item px-1 py-0.5 rounded text-xs cursor-pointer transition-all duration-300
+        ${hasConflict 
+          ? 'bg-red-100 border border-red-300 text-red-800 hover:bg-red-200' 
+          : 'bg-blue-100 border border-blue-300 text-blue-800 hover:bg-blue-200'
+        }
+        ${hasConflict ? 'pulse-glow' : ''}
+        mb-0.5
       `}
-      title={`${event.title} - ${formatEventTime(event.startTime, event.endTime)}${hasConflict ? ' (CONFLICT)' : ''}`}
+      onClick={onClick}
+      title={`${event.title} (${startTime} - ${endTime})`}
     >
-      <div className="flex items-center space-x-1">
-        <Clock className="h-3 w-3 flex-shrink-0 text-blue-500" />
-        <span className="font-medium truncate text-blue-800">{event.title}</span>
-        {hasConflict && (
-          <AlertTriangle className="h-3 w-3 text-amber-600 flex-shrink-0" />
-        )}
+      <div className="font-medium truncate text-xs leading-tight">{event.title}</div>
+      <div className="text-[10px] opacity-75 leading-tight">
+        {startTime} - {endTime}
       </div>
-      <div className="text-xs opacity-75 mt-0.5">
-        {formatEventTime(event.startTime, event.endTime)}
-      </div>
+      {hasConflict && (
+        <div className="text-[10px] font-medium mt-0.5 text-red-600 leading-tight">
+          ⚠️ Conflict
+        </div>
+      )}
     </div>
   );
-};
+}
 
 export default EventItem;

@@ -14,7 +14,8 @@ import {
   addDays,
   subDays,
   addWeeks,
-  subWeeks
+  subWeeks,
+  isValid
 } from 'date-fns';
 
 export const getNextDay = (date) => addDays(date, 1);
@@ -35,7 +36,18 @@ export const getCalendarDays = (date) => {
 };
 
 export const formatDate = (date, formatString) => {
-  return format(date, formatString);
+  // Check if date is valid
+  if (!date || !isValid(date)) {
+    console.error('Invalid date provided to formatDate:', date);
+    return 'Invalid Date';
+  }
+  
+  try {
+    return format(date, formatString);
+  } catch (error) {
+    console.error('Error formatting date:', error, 'Date:', date, 'Format:', formatString);
+    return 'Invalid Date';
+  }
 };
 
 export const isCurrentMonth = (date, currentMonth) => {
@@ -55,7 +67,17 @@ export const getPreviousMonth = (date) => {
 };
 
 export const parseDate = (dateString) => {
-  return parseISO(dateString);
+  try {
+    const parsed = parseISO(dateString);
+    if (!isValid(parsed)) {
+      console.error('Invalid date string:', dateString);
+      return new Date();
+    }
+    return parsed;
+  } catch (error) {
+    console.error('Error parsing date:', error, 'Date string:', dateString);
+    return new Date();
+  }
 };
 
 export const isSameDateAs = (date1, date2) => {
