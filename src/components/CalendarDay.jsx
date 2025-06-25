@@ -5,20 +5,20 @@ import {
   sortEventsByTime,
   hasOverlappingEvents
 } from '../utils/eventUtils';
-import EventItem from './EventItem';
+import EventBox from './EventItem';
 
-function CalendarDay({
+function CalendarCell({
   date,
   currentMonth,
   events,
   onEventClick,
   isFirstRow
 }) {
-  const [isEventListOpen, setIsEventListOpen] = useState(false);
+  const [showEventList, setShowEventList] = useState(false);
   const dayEvents = sortEventsByTime(getEventsForDate(events, date));
   const isToday = isCurrentDay(date);
   const isInCurrentMonth = isCurrentMonth(date, currentMonth);
-  const hasOverlapping = hasOverlappingEvents(dayEvents);
+  const hasOverlap = hasOverlappingEvents(dayEvents);
   const visibleEvents = dayEvents.slice(0, 2);
   const hiddenEventsCount = dayEvents.length - visibleEvents.length;
 
@@ -33,7 +33,7 @@ function CalendarDay({
       <div className="flex items-center justify-between mb-2 flex-shrink-0">
         <button
           className={`inline-flex items-center justify-center w-8 h-8 text-sm font-medium rounded-full transition-colors duration-200 focus:outline-none ${isToday ? 'pulse-glow' : ''} ${isToday ? 'bg-blue-600 text-white' : isInCurrentMonth ? 'text-gray-900 hover:bg-gray-100' : 'text-gray-400'}`}
-          onClick={() => setIsEventListOpen(true)}
+          onClick={() => setShowEventList(true)}
           aria-label={`Show events for ${formatDate(date, 'MMMM d')}`}
         >
           {formatDate(date, 'd')}
@@ -41,7 +41,7 @@ function CalendarDay({
         {dayEvents.length > 0 && (
           <span className="ml-1 w-2 h-2 bg-red-500 rounded-full sm:hidden inline-block" />
         )}
-        {hasOverlapping && (
+        {hasOverlap && (
           <div
             className="w-2 h-2 bg-red-500 rounded-full animate-pulse hidden sm:block"
             title="Schedule conflicts detected"
@@ -52,7 +52,7 @@ function CalendarDay({
       <div className="space-y-1 flex-1 overflow-y-auto min-h-0 custom-scrollbar hidden sm:block">
         {visibleEvents.map((event, index) => (
           <div key={event.id} className="fade-in-up" style={{ animationDelay: `${index * 0.1}s` }}>
-            <EventItem
+            <EventBox
               event={event}
               allEvents={events}
               onClick={() => onEventClick(event)}
@@ -63,7 +63,7 @@ function CalendarDay({
         {hiddenEventsCount > 0 && (
           <button
             className="text-xs text-blue-600 font-medium px-2 py-1 bg-blue-50 rounded hover:bg-blue-100 transition-colors cursor-pointer w-full text-left"
-            onClick={() => setIsEventListOpen(true)}
+            onClick={() => setShowEventList(true)}
             aria-label={`Show ${hiddenEventsCount} more events`}
           >
             +{hiddenEventsCount} more
@@ -76,13 +76,13 @@ function CalendarDay({
           <div className="text-xs text-gray-400 font-medium">No events</div>
         </div>
       )}
-      {isEventListOpen && (
+      {showEventList && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
           <div className="bg-white rounded-lg shadow-xl w-11/12 max-w-md mx-auto p-4">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold">Events for {formatDate(date, 'MMMM d')}</h3>
               <button
-                onClick={() => setIsEventListOpen(false)}
+                onClick={() => setShowEventList(false)}
                 className="p-2 rounded hover:bg-gray-100"
                 aria-label="Close event list"
               >
@@ -98,7 +98,7 @@ function CalendarDay({
                     <button
                       className="w-full text-left p-2 rounded hover:bg-gray-100"
                       onClick={() => {
-                        setIsEventListOpen(false);
+                        setShowEventList(false);
                         onEventClick(event);
                       }}
                     >
@@ -116,4 +116,4 @@ function CalendarDay({
   );
 }
 
-export default CalendarDay;
+export default CalendarCell;

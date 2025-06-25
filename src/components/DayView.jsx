@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { format } from 'date-fns';
-import EventItem from './EventItem';
+import EventBox from './EventItem';
 
-const DayView = ({ currentDate, events, onEventClick, allEvents }) => {
-  const [isEventListOpen, setIsEventListOpen] = useState(false);
+const DayPanel = ({ currentDate, events, onEventClick, allEvents }) => {
+  const [showEventList, setShowEventList] = useState(false);
   const hours = Array.from({ length: 24 }, (_, i) => i);
 
   const dayEvents = events.filter(event => {
@@ -16,7 +16,7 @@ const DayView = ({ currentDate, events, onEventClick, allEvents }) => {
       <div className="p-4 border-b flex items-center">
         <button
           className="text-lg font-semibold focus:outline-none"
-          onClick={() => setIsEventListOpen(true)}
+          onClick={() => setShowEventList(true)}
           aria-label={`Show events for ${format(currentDate, 'MMMM d')}`}
         >
           {format(currentDate, 'EEEE, MMMM d')}
@@ -42,7 +42,7 @@ const DayView = ({ currentDate, events, onEventClick, allEvents }) => {
               </div>
               <div className="flex-1 border-l py-1 px-1 min-h-0 flex flex-col justify-center">
                 {visibleEvents.map(event => (
-                  <EventItem
+                  <EventBox
                     key={event.id}
                     event={event}
                     allEvents={allEvents}
@@ -52,7 +52,7 @@ const DayView = ({ currentDate, events, onEventClick, allEvents }) => {
                 {hiddenEventsCount > 0 && (
                   <button
                     className="text-xs text-blue-600 font-medium px-2 py-1 bg-blue-50 rounded hover:bg-blue-100 transition-colors cursor-pointer w-full text-left mt-0.5"
-                    onClick={() => setIsEventListOpen(true)}
+                    onClick={() => setShowEventList(true)}
                     aria-label={`Show ${hiddenEventsCount} more events for this hour`}
                   >
                     +{hiddenEventsCount} more
@@ -64,13 +64,13 @@ const DayView = ({ currentDate, events, onEventClick, allEvents }) => {
         })}
       </div>
       {/* Simple modal for mobile event list */}
-      {isEventListOpen && (
+      {showEventList && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
           <div className="bg-white rounded-lg shadow-xl w-11/12 max-w-md mx-auto p-4">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold">Events for {format(currentDate, 'MMMM d')}</h3>
               <button
-                onClick={() => setIsEventListOpen(false)}
+                onClick={() => setShowEventList(false)}
                 className="p-2 rounded hover:bg-gray-100"
                 aria-label="Close event list"
               >
@@ -86,7 +86,7 @@ const DayView = ({ currentDate, events, onEventClick, allEvents }) => {
                     <button
                       className="w-full text-left p-2 rounded hover:bg-gray-100"
                       onClick={() => {
-                        setIsEventListOpen(false);
+                        setShowEventList(false);
                         onEventClick(event);
                       }}
                     >
@@ -104,4 +104,4 @@ const DayView = ({ currentDate, events, onEventClick, allEvents }) => {
   );
 };
 
-export default DayView;
+export default DayPanel;

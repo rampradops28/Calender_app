@@ -11,23 +11,19 @@ import {
   getNextWeek,
   getPreviousWeek
 } from '../utils/dateUtils';
-import CalendarDay from './CalendarDay';
-import EventModal from './EventModal';
-import ConflictModal from './ConflictModal';
-import { getConflictingEvents } from '../utils/eventUtils';
-import eventsData from '../data/events.json';
+import CalendarCell from './CalendarDay';
+import EventPopup from './EventModal';
 import ViewSwitcher from './ViewSwitcher';
-import DayView from './DayView';
-import WeekView from './WeekView';
+import DayPanel from './DayView';
+import WeekPanel from './WeekView';
 import ScheduleView from './ScheduleView';
+import eventsData from '../data/events.json';
 
 const Calendar = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [conflictingEvents, setConflictingEvents] = useState([]);
-  const [isConflictModalOpen, setIsConflictModalOpen] = useState(false);
   const [direction, setDirection] = useState('next');
   const [currentView, setCurrentView] = useState('month');
   const [animationState, setAnimationState] = useState('idle');
@@ -36,12 +32,6 @@ const Calendar = () => {
   useEffect(() => {
     const loadedEvents = eventsData;
     setEvents(loadedEvents);
-
-    const conflicts = getConflictingEvents(loadedEvents);
-    if (conflicts.length > 0) {
-      setConflictingEvents(conflicts);
-      setIsConflictModalOpen(true);
-    }
   }, []);
 
   const calendarDays = getCalendarDays(currentDate);
@@ -49,11 +39,9 @@ const Calendar = () => {
 
   const handlePrevious = () => {
     if (isAnimating) return;
-    
     setIsAnimating(true);
     setDirection('prev');
     setAnimationState('slide-out-top');
-    
     setTimeout(() => {
       if (currentView === 'month') {
         setCurrentDate(getPreviousMonth(currentDate));
@@ -63,12 +51,11 @@ const Calendar = () => {
         setCurrentDate(getPreviousDay(currentDate));
       }
       setAnimationState('slide-in-bottom');
-      
       setTimeout(() => {
         setAnimationState('idle');
         setIsAnimating(false);
-      }, 600);
-    }, 400);
+      }, 1400);
+    }, 1100);
   };
 
   const handleNext = () => {
@@ -91,8 +78,8 @@ const Calendar = () => {
       setTimeout(() => {
         setAnimationState('idle');
         setIsAnimating(false);
-      }, 600);
-    }, 400);
+      }, 1400);
+    }, 1100);
   };
 
   const handleGoToToday = () => {
@@ -112,8 +99,8 @@ const Calendar = () => {
       setTimeout(() => {
         setAnimationState('idle');
         setIsAnimating(false);
-      }, 600);
-    }, 400);
+      }, 1400);
+    }, 1100);
   };
 
   const handleEventClick = (event) => {
@@ -124,10 +111,6 @@ const Calendar = () => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedEvent(null);
-  };
-
-  const handleCloseConflictModal = () => {
-    setIsConflictModalOpen(false);
   };
 
   const handleViewChange = (view) => {
@@ -153,7 +136,7 @@ const Calendar = () => {
     <>
       <div className="bg-white rounded-lg shadow-lg overflow-hidden h-screen flex flex-col gap-4 lg:gap-0 lg:flex-row">
         {/* Calendar section */}
-        <section className="w-full flex flex-col min-h-0 bg-white p-2 sm:p-4 lg:w-[70%] lg:p-6">
+        <section className="w-full flex flex-col min-h-0 bg-white p-2 sm:p-4 lg:w-[70%] lg:p-6 relative">
           <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-6 flex-shrink-0 rounded-lg   mb-2">
             <div className="flex items-center space-x-3">
               <CalendarIcon className="h-8 w-8" />
@@ -202,39 +185,40 @@ const Calendar = () => {
             </div>
           </div>
 
-          <div className={`flex-1 flex flex-col min-h-0 relative overflow-hidden ${getAnimationClass()}`}>
-            {currentView === 'month' && (
-              <>
-                <div className="grid grid-cols-7 bg-gray-50 border-b border-gray-200 flex-shrink-0">
-                  {weekDays.map((day) => (
-                    <div
-                      key={day}
-                      className="p-4 text-center text-sm font-semibold text-gray-600 uppercase"
-                    >
-                      {day}
-                    </div>
-                  ))}
-                </div>
-                <div className="grid grid-cols-7 flex-1 min-h-0">
-                  {calendarDays.map((day, index) => (
-                    <CalendarDay
-                      key={day.toString()}
-                      date={day}
-                      currentMonth={currentDate}
-                      events={events}
-                      onEventClick={handleEventClick}
-                      isFirstRow={index < 7}
-                    />
-                  ))}
-                </div>
-              </>
-            )}
-            {currentView === 'day' && <DayView currentDate={currentDate} events={events} onEventClick={handleEventClick} allEvents={events} />}
-            {currentView === 'week' && <WeekView currentDate={currentDate} events={events} onEventClick={handleEventClick} allEvents={events} />}
-          </div>
+          {/* Only animate the month view */}
+          {currentView === 'month' ? (
+            <div className={`flex-1 flex flex-col min-h-0 relative overflow-hidden ${getAnimationClass()}`}>
+              <div className="grid grid-cols-7 bg-gray-50 border-b border-gray-200 flex-shrink-0">
+                {weekDays.map((day) => (
+                  <div
+                    key={day}
+                    className="p-4 text-center text-sm font-semibold text-gray-600 uppercase"
+                  >
+                    {day}
+                  </div>
+                ))}
+              </div>
+              <div className="grid grid-cols-7 flex-1 min-h-0">
+                {calendarDays.map((day, index) => (
+                  <CalendarCell
+                    key={day.toString()}
+                    date={day}
+                    currentMonth={currentDate}
+                    events={events}
+                    onEventClick={handleEventClick}
+                    isFirstRow={index < 7}
+                  />
+                ))}
+              </div>
+            </div>
+          ) : currentView === 'day' ? (
+            <DayPanel currentDate={currentDate} events={events} onEventClick={handleEventClick} allEvents={events} />
+          ) : currentView === 'week' ? (
+            <WeekPanel currentDate={currentDate} events={events} onEventClick={handleEventClick} allEvents={events} />
+          ) : null}
 
           {isModalOpen && selectedEvent && (
-            <EventModal
+            <EventPopup
               event={selectedEvent}
               isOpen={isModalOpen}
               onClose={handleCloseModal}
@@ -249,12 +233,6 @@ const Calendar = () => {
           <ScheduleView events={events} onEventClick={handleEventClick} />
         </section>
       </div>
-
-      <ConflictModal
-        conflictingEvents={conflictingEvents}
-        isOpen={isConflictModalOpen}
-        onClose={handleCloseConflictModal}
-      />
     </>
   );
 };

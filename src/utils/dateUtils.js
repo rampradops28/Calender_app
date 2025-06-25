@@ -8,7 +8,7 @@ import {
   isSameMonth,
   isToday,
   addMonths,
-  subMonths,  
+  subMonths,
   parseISO,
   isSameDay,
   addDays,
@@ -24,28 +24,18 @@ export const getNextWeek = (date) => addWeeks(date, 1);
 export const getPreviousWeek = (date) => subWeeks(date, 1);
 
 export const getCalendarDays = (date) => {
-  const monthStart = startOfMonth(date);
-  const monthEnd = endOfMonth(date);
-  const calendarStart = startOfWeek(monthStart);
-  const calendarEnd = endOfWeek(monthEnd);
-
-  return eachDayOfInterval({
-    start: calendarStart,
-    end: calendarEnd,
-  });
+  const start = startOfWeek(startOfMonth(date), { weekStartsOn: 0 });
+  const end = endOfWeek(endOfMonth(date), { weekStartsOn: 0 });
+  return eachDayOfInterval({ start, end });
 };
 
 export const formatDate = (date, formatString) => {
-  // Check if date is valid
   if (!date || !isValid(date)) {
-    console.error('Invalid date provided to formatDate:', date);
     return 'Invalid Date';
   }
-  
   try {
     return format(date, formatString);
   } catch (error) {
-    console.error('Error formatting date:', error, 'Date:', date, 'Format:', formatString);
     return 'Invalid Date';
   }
 };
@@ -70,12 +60,10 @@ export const parseDate = (dateString) => {
   try {
     const parsed = parseISO(dateString);
     if (!isValid(parsed)) {
-      console.error('Invalid date string:', dateString);
       return new Date();
     }
     return parsed;
   } catch (error) {
-    console.error('Error parsing date:', error, 'Date string:', dateString);
     return new Date();
   }
 };

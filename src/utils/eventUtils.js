@@ -1,24 +1,19 @@
 import { parseDate, isSameDateAs } from './dateUtils';
 
 export const getEventsForDate = (events, date) => {
-  return events.filter(event => 
-    isSameDateAs(parseDate(event.date), date)
-  );
+  return events.filter(event => isSameDateAs(parseDate(event.date), date));
 };
 
 export const sortEventsByTime = (events) => {
   return [...events].sort((a, b) => {
     const timeA = a.startTime.split(':').map(Number);
     const timeB = b.startTime.split(':').map(Number);
-    
-    if (timeA[0] !== timeB[0]) {
-      return timeA[0] - timeB[0];
-    }
+    if (timeA[0] !== timeB[0]) return timeA[0] - timeB[0];
     return timeA[1] - timeB[1];
   });
 };
 
-export const getEventTypeColor = (type) => {
+export const getTypeColor = (type) => {
   const colors = {
     work: 'bg-blue-100 text-blue-800 border-blue-200',
     personal: 'bg-purple-100 text-purple-800 border-purple-200',
@@ -27,21 +22,16 @@ export const getEventTypeColor = (type) => {
     social: 'bg-yellow-100 text-yellow-800 border-yellow-200',
     travel: 'bg-indigo-100 text-indigo-800 border-indigo-200',
   };
-  
   return colors[type] || colors.personal;
 };
 
-export const getConflictEventColor = (hasConflict) => {
-  return hasConflict 
-    ? 'bg-red-100 text-red-800 border-red-300 ring-2 ring-red-200' 
-    : '';
+export const getOverlapColor = (hasOverlap) => {
+  return hasOverlap ? 'bg-red-100 text-red-800 border-red-300 ring-2 ring-red-200' : '';
 };
 
 export const formatEventTime = (startTime, endTime) => {
   const format = (timeStr) => {
-    if (typeof timeStr !== 'string' || !timeStr.includes(':')) {
-      return 'Invalid time';
-    }
+    if (typeof timeStr !== 'string' || !timeStr.includes(':')) return 'Invalid time';
     const [hours, minutes] = timeStr.split(':').map(Number);
     const date = new Date();
     date.setHours(hours, minutes, 0, 0);
@@ -51,86 +41,63 @@ export const formatEventTime = (startTime, endTime) => {
       hour12: true
     });
   };
-  
   return `${format(startTime)} - ${format(endTime)}`;
 };
 
 export const hasOverlappingEvents = (events) => {
   if (events.length <= 1) return false;
-  
-  const sortedEvents = sortEventsByTime(events);
-  
-  for (let i = 0; i < sortedEvents.length - 1; i++) {
-    const current = sortedEvents[i];
-    const next = sortedEvents[i + 1];
-    
-    const currentEnd = getEventEndTime(current);
-    const nextStart = getEventStartTime(next);
-    
-    if (currentEnd > nextStart) {
-      return true;
-    }
+  const sorted = sortEventsByTime(events);
+  for (let i = 0; i < sorted.length - 1; i++) {
+    const current = sorted[i];
+    const next = sorted[i + 1];
+    const currentEnd = getEventEnd(current);
+    const nextStart = getEventStart(next);
+    if (currentEnd > nextStart) return true;
   }
-  
   return false;
 };
 
-export const getConflictingEvents = (events) => {
-  const conflictingEvents = [];
-  const eventsByDate = {};
-  
-  // Group events by date
+export const getOverlappingEvents = (events) => {
+  const overlaps = [];
+  const byDate = {};
   events.forEach(event => {
-    if (!eventsByDate[event.date]) {
-      eventsByDate[event.date] = [];
-    }
-    eventsByDate[event.date].push(event);
+    if (!byDate[event.date]) byDate[event.date] = [];
+    byDate[event.date].push(event);
   });
-  
-  // Check for conflicts within each date
-  Object.values(eventsByDate).forEach(dayEvents => {
+  Object.values(byDate).forEach(dayEvents => {
     if (hasOverlappingEvents(dayEvents)) {
-      const sortedEvents = sortEventsByTime(dayEvents);
-      
-      for (let i = 0; i < sortedEvents.length - 1; i++) {
-        const current = sortedEvents[i];
-        const next = sortedEvents[i + 1];
-        
-        const currentEnd = getEventEndTime(current);
-        const nextStart = getEventStartTime(next);
-        
+      const sorted = sortEventsByTime(dayEvents);
+      for (let i = 0; i < sorted.length - 1; i++) {
+        const current = sorted[i];
+        const next = sorted[i + 1];
+        const currentEnd = getEventEnd(current);
+        const nextStart = getEventStart(next);
         if (currentEnd > nextStart) {
-          if (!conflictingEvents.find(e => e.id === current.id)) {
-            conflictingEvents.push(current);
-          }
-          if (!conflictingEvents.find(e => e.id === next.id)) {
-            conflictingEvents.push(next);
-          }
+          if (!overlaps.find(e => e.id === current.id)) overlaps.push(current);
+          if (!overlaps.find(e => e.id === next.id)) overlaps.push(next);
         }
       }
     }
   });
-  
-  return conflictingEvents;
+  return overlaps;
 };
 
-export const isEventConflicting = (event, allEvents) => {
-  if (!allEvents) {
-    return false;
-  }
-  const conflictingEvents = getConflictingEvents(allEvents);
-  return conflictingEvents.some(conflictEvent => conflictEvent.id === event.id);
+export const isEventOverlapping = (event, allEvents) => {
+  if (!allEvents) return false;
+  const overlaps = getOverlappingEvents(allEvents);
+  return overlaps.some(e => e.id === event.id);
 };
 
-const getEventStartTime = (event) => {
+const getEventStart = (event) => {
   const [hours, minutes] = event.startTime.split(':').map(Number);
   return hours * 60 + minutes;
 };
 
-const getEventEndTime = (event) => {
+const getEventEnd = (event) => {
   const [hours, minutes] = event.endTime.split(':').map(Number);
   return hours * 60 + minutes;
 };
+
 export const sortEventsByDate = (events) => {
   return [...events].sort((a, b) => {
     const dateA = new Date(a.date);

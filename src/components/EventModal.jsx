@@ -2,22 +2,20 @@ import React from 'react';
 import { X, Clock, MapPin, User, AlertTriangle } from 'lucide-react';
 import { formatDate, parseDate } from '../utils/dateUtils';
 
-const EventModal = ({ event, isOpen, onClose, allEvents }) => {
+const EventPopup = ({ event, isOpen, onClose, allEvents }) => {
   if (!isOpen || !event) return null;
 
-  // Create proper Date objects from the event data
-  const eventDate = parseDate(event.date);
-  const startDateTime = new Date(`${event.date}T${event.startTime}`);
-  const endDateTime = new Date(`${event.date}T${event.endTime}`);
-  
-  // Check for conflicts
-  const conflictingEvents = allEvents.filter(otherEvent => 
-    otherEvent.id !== event.id &&
-    otherEvent.date === event.date &&
-    ((otherEvent.startTime < event.endTime && otherEvent.endTime > event.startTime))
+  const eventDay = parseDate(event.date);
+  const start = new Date(`${event.date}T${event.startTime}`);
+  const end = new Date(`${event.date}T${event.endTime}`);
+
+  const overlapping = allEvents.filter(e =>
+    e.id !== event.id &&
+    e.date === event.date &&
+    (e.startTime < event.endTime && e.endTime > event.startTime)
   );
 
-  const hasConflict = conflictingEvents.length > 0;
+  const hasOverlap = overlapping.length > 0;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center modal-overlay">
@@ -34,13 +32,13 @@ const EventModal = ({ event, isOpen, onClose, allEvents }) => {
         </div>
 
         <div className="p-6 space-y-4 custom-scrollbar max-h-[60vh] overflow-y-auto">
-          {hasConflict && (
+          {hasOverlap && (
             <div className="flex items-center space-x-2 p-3 bg-red-50 border border-red-200 rounded-lg">
               <AlertTriangle className="h-5 w-5 text-red-600" />
               <div>
-                <p className="text-sm font-medium text-red-800">Schedule Conflict</p>
+                <p className="text-sm font-medium text-red-800">Schedule Overlap</p>
                 <p className="text-xs text-red-600">
-                  This event overlaps with {conflictingEvents.length} other event(s)
+                  This event overlaps with {overlapping.length} other event(s)
                 </p>
               </div>
             </div>
@@ -50,10 +48,10 @@ const EventModal = ({ event, isOpen, onClose, allEvents }) => {
             <Clock className="h-5 w-5 text-blue-600" />
             <div>
               <p className="text-sm font-medium text-gray-900">
-                {formatDate(eventDate, 'EEEE, MMMM d, yyyy')}
+                {formatDate(eventDay, 'EEEE, MMMM d, yyyy')}
               </p>
               <p className="text-sm text-gray-600">
-                {formatDate(startDateTime, 'HH:mm')} - {formatDate(endDateTime, 'HH:mm')}
+                {formatDate(start, 'HH:mm')} - {formatDate(end, 'HH:mm')}
               </p>
             </div>
           </div>
@@ -102,4 +100,4 @@ const EventModal = ({ event, isOpen, onClose, allEvents }) => {
   );
 };
 
-export default EventModal;
+export default EventPopup;

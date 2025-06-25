@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { format, startOfWeek, addDays } from 'date-fns';
-import EventItem from './EventItem';
+import EventBox from './EventItem';
 
-const WeekView = ({ currentDate, events, onEventClick, allEvents }) => {
+const WeekPanel = ({ currentDate, events, onEventClick, allEvents }) => {
   const [modalDay, setModalDay] = useState(null);
   const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 });
   const days = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
@@ -66,7 +66,7 @@ const WeekView = ({ currentDate, events, onEventClick, allEvents }) => {
                   return (
                     <div key={hour} className="h-16 border-b py-1 px-1 min-h-0 flex flex-col justify-center">
                       {visibleEvents.map(event => (
-                        <EventItem
+                        <EventBox
                           key={event.id}
                           event={event}
                           allEvents={allEvents}
@@ -131,4 +131,4 @@ const WeekView = ({ currentDate, events, onEventClick, allEvents }) => {
   );
 };
 
-export default WeekView;
+export default WeekPanel;

@@ -1,7 +1,7 @@
 import React from 'react';
 import Calendar from './components/Calendar';
 
-function App() {
+function MainApp() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
       <div className="max-w-6xl mx-auto">
@@ -22,4 +22,4 @@ function App() {
   );
 }
 
-export default App;
+export default MainApp;
