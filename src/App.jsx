@@ -3,17 +3,14 @@ import Calendar from './components/Calendar';
 
 function MainApp() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
-      <div className="w-full max-w-6xl h-full flex flex-col justify-center">
-        <div className="text-center mb-8">
-          <h1 className="text-5xl text-indigo-700 mb-2 mt-10 flex items-center justify-center gap-2 font-poppins">
-            <span>Event Calendar</span>
-          </h1> 
-             
+    <div className="min-h-screen w-full bg-gradient-to-br from-blue-50 to-indigo-100 flex flex-col items-center overflow-y-auto">
+      <div className="w-full max-w-7xl px-4 py-8">
+        <div className="text-center mb-6">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl text-indigo-700 font-poppins font-semibold">
+            Event Calendar
+          </h1>
         </div>
-        <div className="w-full flex-1">
-          <Calendar />
-        </div>
+        <Calendar />
       </div>
     </div>
   );

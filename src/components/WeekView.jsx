@@ -14,19 +14,36 @@ const WeekPanel = ({ currentDate, events, onEventClick, allEvents }) => {
       return eventDate.toDateString() === day.toDateString();
     });
 
+  // Gradient colors for each day
+  const dayColors = [
+    'from-purple-400 to-pink-400', // Monday
+    'from-blue-400 to-cyan-400',   // Tuesday
+    'from-green-400 to-emerald-400', // Wednesday
+    'from-yellow-400 to-orange-400', // Thursday
+    'from-red-400 to-pink-400',    // Friday
+    'from-indigo-400 to-purple-400', // Saturday
+    'from-teal-400 to-blue-400'    // Sunday
+  ];
+
   return (
     <div className="bg-white rounded-b-2xl shadow-xl overflow-hidden h-full">
       <div className="grid grid-cols-8">
         <div className="p-2 border-b border-r"></div>
-        {days.map((day) => {
+        {days.map((day, index) => {
           const dayEvents = getEventsForDay(day);
           const hasEvents = dayEvents.length > 0;
+          const isToday = day.toDateString() === new Date().toDateString();
+          const gradientClass = dayColors[index];
+          
           return (
-            <div key={day} className="p-2 border-b text-center flex flex-col items-center">
-            <p className="text-sm">{format(day, 'EEE')}</p>
-              <div className="flex items-center">
+            <div key={day} className="p-2 border-b text-center flex flex-col items-center relative group">
+              <div className={`w-full h-full absolute inset-0 bg-gradient-to-br ${gradientClass} opacity-0 group-hover:opacity-10 transition-all duration-300 ease-out rounded-lg`}></div>
+              <p className={`text-sm font-medium transition-all duration-300 group-hover:scale-110 group-hover:font-semibold relative z-10 ${isToday ? 'text-blue-600' : 'text-gray-600'}`}>
+                {format(day, 'EEE')}
+              </p>
+              <div className="flex items-center relative z-10">
                 <button
-                  className="text-lg font-semibold focus:outline-none"
+                  className={`text-lg font-semibold focus:outline-none transition-all duration-300 group-hover:scale-125 group-hover:drop-shadow-lg ${isToday ? 'text-blue-600' : 'text-gray-800'}`}
                   onClick={() => setModalDay(day)}
                   aria-label={`Show events for ${format(day, 'MMM d')}`}
                 >
@@ -34,10 +51,12 @@ const WeekPanel = ({ currentDate, events, onEventClick, allEvents }) => {
                 </button>
                 {/* Red dot as indicator only, not clickable */}
                 {hasEvents && (
-                  <span className="ml-1 w-2 h-2 bg-red-500 rounded-full sm:hidden inline-block" />
+                  <span className="ml-1 w-2 h-2 bg-red-500 rounded-full sm:hidden inline-block animate-pulse" />
                 )}
               </div>
-          </div>
+              {/* Subtle glow effect on hover */}
+              <div className={`absolute inset-0 bg-gradient-to-br ${gradientClass} opacity-0 group-hover:opacity-5 transition-all duration-500 ease-out rounded-lg blur-sm`}></div>
+            </div>
           );
         })}
       </div>

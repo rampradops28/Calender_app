@@ -37,6 +37,17 @@ const Calendar = () => {
   const calendarDays = getCalendarDays(currentDate);
   const weekDays = getWeekDays();
 
+  // Gradient colors for each day of the week
+  const dayColors = [
+    'from-purple-400 to-pink-400', // Monday
+    'from-blue-400 to-cyan-400',   // Tuesday
+    'from-green-400 to-emerald-400', // Wednesday
+    'from-yellow-400 to-orange-400', // Thursday
+    'from-red-400 to-pink-400',    // Friday
+    'from-indigo-400 to-purple-400', // Saturday
+    'from-teal-400 to-blue-400'    // Sunday
+  ];
+
   const handlePrevious = () => {
     if (isAnimating) return;
     setIsAnimating(true);
@@ -189,14 +200,28 @@ const Calendar = () => {
           {currentView === 'month' ? (
         <div className={`flex-1 flex flex-col min-h-0 relative overflow-hidden ${getAnimationClass()} max-h-full`}>
               <div className="grid grid-cols-7 bg-gray-50 border-b border-gray-200 flex-shrink-0">
-                {weekDays.map((day) => (
-                  <div
-                    key={day}
-                    className="p-4 text-center text-sm font-semibold text-gray-600 uppercase"
-                  >
-                    {day}
-                  </div>
-                ))}
+                {weekDays.map((day, index) => {
+                  const gradientClass = dayColors[index];
+                  const isToday = day.toLowerCase() === formatDate(new Date(), 'EEE').toLowerCase();
+                  
+                  return (
+                    <div
+                      key={day}
+                      className={`p-4 text-center text-sm font-semibold text-gray-600 uppercase relative group cursor-pointer transition-all duration-300 ${isToday ? 'text-blue-600' : ''}`}
+                    >
+                      {/* Background gradient on hover */}
+                      <div className={`absolute inset-0 bg-gradient-to-br ${gradientClass} opacity-0 group-hover:opacity-10 transition-all duration-300 ease-out rounded-lg`}></div>
+                      
+                      {/* Text with hover effects */}
+                      <span className={`relative z-10 transition-all duration-300 group-hover:scale-110 group-hover:font-bold ${isToday ? 'text-blue-600' : 'text-gray-600'}`}>
+                        {day}
+                      </span>
+                      
+                      {/* Subtle glow effect on hover */}
+                      <div className={`absolute inset-0 bg-gradient-to-br ${gradientClass} opacity-0 group-hover:opacity-5 transition-all duration-500 ease-out rounded-lg blur-sm`}></div>
+                    </div>
+                  );
+                })}
               </div>
               <div className="grid grid-cols-7 flex-1 min-h-0 max-h-full">
                 {calendarDays.map((day, index) => (
