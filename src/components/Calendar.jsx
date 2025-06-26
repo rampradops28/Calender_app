@@ -145,38 +145,38 @@ const Calendar = () => {
 
   return (
     <>
-      <div className="bg-white rounded-lg shadow-lg overflow-hidden h-screen flex flex-col gap-4 lg:gap-0 lg:flex-row">
+      <div className="bg-white rounded-lg shadow-lg overflow-hidden h-screen flex flex-col gap-2 sm:gap-4 lg:gap-0 lg:flex-row">
         {/* Calendar section */}
-        <section className="w-full flex flex-col min-h-0 bg-white p-2 sm:p-4 lg:w-full lg:p-6 relative justify-between h-full max-h-full">
-          <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-4 flex-shrink-0 rounded-lg mb-2">
-            <div className="flex items-center space-x-3">
-              <CalendarIcon className="h-8 w-8" />
+        <section className="w-full flex flex-col min-h-0 bg-white p-2 sm:p-4 lg:w-[70%] lg:p-6 relative justify-between h-[60%] lg:h-full max-h-full">
+          <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-2 sm:p-4 flex-shrink-0 rounded-lg mb-2">
+            <div className="flex items-center space-x-2 sm:space-x-3">
+              <CalendarIcon className="h-6 w-6 sm:h-8 sm:w-8" />
               <div>
-                <h1 className="text-2xl font-bold">
+                <h1 className="text-lg sm:text-2xl font-bold">
                   {formatDate(currentDate, 'MMMM yyyy')}
                 </h1>
-                <p className="text-blue-100 text-sm">
+                <p className="text-blue-100 text-xs sm:text-sm">
                   {formatDate(new Date(), 'EEEE, MMMM d, yyyy')}
                 </p>
               </div>
             </div>
 
-            <div className="flex items-center justify-center sm:justify-end space-x-3">
+            <div className="flex items-center justify-center sm:justify-end space-x-2 sm:space-x-3 mt-2 sm:mt-0">
               <ViewSwitcher currentView={currentView} onViewChange={handleViewChange} />
               <button
                 onClick={handlePrevious}
                 disabled={isAnimating}
-                className={`btn-advanced p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors custom-focus ${
+                className={`btn-advanced p-1.5 sm:p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors custom-focus ${
                   isAnimating ? 'opacity-50 cursor-not-allowed' : ''
                 }`}
                 aria-label="Previous"
               >
-                <ChevronLeft className="h-5 w-5" />
+                <ChevronLeft className="h-4 w-4 sm:h-5 sm:w-5" />
               </button>
               <button
                 onClick={handleGoToToday}
                 disabled={isAnimating}
-                className={`btn-advanced px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors font-medium custom-focus ${
+                className={`btn-advanced px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors font-medium custom-focus text-xs sm:text-sm ${
                   isAnimating ? 'opacity-50 cursor-not-allowed' : ''
                 }`}
                 aria-label="Go to today"
@@ -186,12 +186,12 @@ const Calendar = () => {
               <button
                 onClick={handleNext}
                 disabled={isAnimating}
-                className={`btn-advanced p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors custom-focus ${
+                className={`btn-advanced p-1.5 sm:p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors custom-focus ${
                   isAnimating ? 'opacity-50 cursor-not-allowed' : ''
                 }`}
                 aria-label="Next"
               >
-                <ChevronRight className="h-5 w-5" />
+                <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5" />
               </button>
           </div>
         </div>
@@ -207,7 +207,7 @@ const Calendar = () => {
                   return (
                     <div
                       key={day}
-                      className={`p-4 text-center text-sm font-semibold text-gray-600 uppercase relative group cursor-pointer transition-all duration-300 ${isToday ? 'text-blue-600' : ''}`}
+                      className={`p-2 sm:p-4 text-center text-xs sm:text-sm font-semibold text-gray-600 uppercase relative group cursor-pointer transition-all duration-300 ${isToday ? 'text-blue-600' : ''}`}
                     >
                       {/* Background gradient on hover */}
                       <div className={`absolute inset-0 bg-gradient-to-br ${gradientClass} opacity-0 group-hover:opacity-10 transition-all duration-300 ease-out rounded-lg`}></div>
@@ -254,7 +254,7 @@ const Calendar = () => {
         {/* Divider for desktop */}
         <div className="hidden lg:block h-full w-px bg-gray-200 shadow-md"></div>
         {/* Schedule section */}
-        <section className="w-full flex flex-col bg-gray-50 h-[400px] lg:h-full overflow-y-auto p-2 sm:p-4 lg:w-[30%] lg:p-4">
+        <section className="w-full flex flex-col bg-gray-50 h-[40%] lg:h-full overflow-y-auto p-2 sm:p-4 lg:w-[30%] lg:p-4 border-t lg:border-t-0 lg:border-l border-gray-200">
           <ScheduleView events={events} onEventClick={handleEventClick} />
         </section>
       </div>

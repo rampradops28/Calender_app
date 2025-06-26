@@ -28,7 +28,7 @@ const WeekPanel = ({ currentDate, events, onEventClick, allEvents }) => {
   return (
     <div className="bg-white rounded-b-2xl shadow-xl overflow-hidden h-full">
       <div className="grid grid-cols-8">
-        <div className="p-2 border-b border-r"></div>
+        <div className="p-1 sm:p-2 border-b border-r"></div>
         {days.map((day, index) => {
           const dayEvents = getEventsForDay(day);
           const hasEvents = dayEvents.length > 0;
@@ -36,14 +36,14 @@ const WeekPanel = ({ currentDate, events, onEventClick, allEvents }) => {
           const gradientClass = dayColors[index];
           
           return (
-            <div key={day} className="p-2 border-b text-center flex flex-col items-center relative group">
+            <div key={day} className="p-1 sm:p-2 border-b text-center flex flex-col items-center relative group">
               <div className={`w-full h-full absolute inset-0 bg-gradient-to-br ${gradientClass} opacity-0 group-hover:opacity-10 transition-all duration-300 ease-out rounded-lg`}></div>
-              <p className={`text-sm font-medium transition-all duration-300 group-hover:scale-110 group-hover:font-semibold relative z-10 ${isToday ? 'text-blue-600' : 'text-gray-600'}`}>
+              <p className={`text-xs sm:text-sm font-medium transition-all duration-300 group-hover:scale-110 group-hover:font-semibold relative z-10 ${isToday ? 'text-blue-600' : 'text-gray-600'}`}>
                 {format(day, 'EEE')}
               </p>
               <div className="flex items-center relative z-10">
                 <button
-                  className={`text-lg font-semibold focus:outline-none transition-all duration-300 group-hover:scale-125 group-hover:drop-shadow-lg ${isToday ? 'text-blue-600' : 'text-gray-800'}`}
+                  className={`text-sm sm:text-lg font-semibold focus:outline-none transition-all duration-300 group-hover:scale-125 group-hover:drop-shadow-lg ${isToday ? 'text-blue-600' : 'text-gray-800'}`}
                   onClick={() => setModalDay(day)}
                   aria-label={`Show events for ${format(day, 'MMM d')}`}
                 >
@@ -65,7 +65,7 @@ const WeekPanel = ({ currentDate, events, onEventClick, allEvents }) => {
         <div className="grid grid-cols-8 h-full">
           <div className="col-span-1">
             {hours.map((hour) => (
-              <div key={hour} className="h-16 border-r text-right pr-2 pt-1 text-sm text-gray-500">
+              <div key={hour} className="h-12 sm:h-16 border-r text-right pr-1 sm:pr-2 pt-1 text-xs sm:text-sm text-gray-500">
                 {format(new Date().setHours(hour), 'h a')}
               </div>
             ))}
@@ -82,7 +82,7 @@ const WeekPanel = ({ currentDate, events, onEventClick, allEvents }) => {
                   const visibleEvents = hourEvents.slice(0, 2);
                   const hiddenEventsCount = hourEvents.length - visibleEvents.length;
                   return (
-                    <div key={hour} className="h-16 border-b py-1 px-1 min-h-0 flex flex-col justify-center">
+                    <div key={hour} className="h-12 sm:h-16 border-b py-0.5 sm:py-1 px-0.5 sm:px-1 min-h-0 flex flex-col justify-center">
                       {visibleEvents.map(event => (
                         <EventBox
                           key={event.id}
@@ -93,7 +93,7 @@ const WeekPanel = ({ currentDate, events, onEventClick, allEvents }) => {
                       ))}
                       {hiddenEventsCount > 0 && (
                         <button
-                          className="text-xs text-blue-600 font-medium px-2 py-1 bg-blue-50 rounded hover:bg-blue-100 transition-colors cursor-pointer w-full text-left mt-0.5"
+                          className="text-xs text-blue-600 font-medium px-1 sm:px-2 py-0.5 sm:py-1 bg-blue-50 rounded hover:bg-blue-100 transition-colors cursor-pointer w-full text-left mt-0.5"
                           onClick={() => setModalDay(day)}
                           aria-label={`Show ${hiddenEventsCount} more events for this hour`}
                         >
@@ -110,22 +110,22 @@ const WeekPanel = ({ currentDate, events, onEventClick, allEvents }) => {
       </div>
       {/* Simple modal for mobile event list */}
       {modalDay && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-          <div className="bg-white rounded-lg shadow-xl w-11/12 max-w-md mx-auto p-4">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold">Events for {format(modalDay, 'MMMM d')}</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 p-2">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-sm mx-auto p-3 sm:p-4">
+            <div className="flex items-center justify-between mb-3 sm:mb-4">
+              <h3 className="text-base sm:text-lg font-semibold">Events for {format(modalDay, 'MMMM d')}</h3>
               <button
                 onClick={() => setModalDay(null)}
-                className="p-2 rounded hover:bg-gray-100"
+                className="p-1 sm:p-2 rounded hover:bg-gray-100"
                 aria-label="Close event list"
               >
-                <span className="text-xl">&times;</span>
+                <span className="text-lg sm:text-xl">&times;</span>
               </button>
             </div>
             {getEventsForDay(modalDay).length === 0 ? (
               <div className="text-gray-500 text-center">No events</div>
             ) : (
-              <ul className="space-y-2">
+              <ul className="space-y-1 sm:space-y-2">
                 {getEventsForDay(modalDay).map(event => (
                   <li key={event.id}>
                     <button
@@ -135,7 +135,7 @@ const WeekPanel = ({ currentDate, events, onEventClick, allEvents }) => {
                         onEventClick(event);
                       }}
                     >
-                      <div className="font-medium">{event.title}</div>
+                      <div className="font-medium text-sm sm:text-base">{event.title}</div>
                       <div className="text-xs text-gray-500">{event.startTime} - {event.endTime}</div>
                     </button>
                   </li>

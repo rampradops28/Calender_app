@@ -13,9 +13,9 @@ const DayPanel = ({ currentDate, events, onEventClick, allEvents }) => {
 
   return (
     <div className="bg-white rounded-b-2xl shadow-xl overflow-hidden h-full">
-      <div className="p-4 border-b flex items-center">
+      <div className="p-2 sm:p-4 border-b flex items-center">
         <button
-          className="text-lg font-semibold focus:outline-none"
+          className="text-sm sm:text-lg font-semibold focus:outline-none"
           onClick={() => setShowEventList(true)}
           aria-label={`Show events for ${format(currentDate, 'MMMM d')}`}
         >
@@ -36,11 +36,11 @@ const DayPanel = ({ currentDate, events, onEventClick, allEvents }) => {
           const visibleEvents = hourEvents.slice(0, 2);
           const hiddenEventsCount = hourEvents.length - visibleEvents.length;
           return (
-            <div key={hour} className="flex border-b h-16 min-h-0">
-            <div className="w-16 text-right pr-2 pt-1 text-sm text-gray-500">
+            <div key={hour} className="flex border-b h-12 sm:h-16 min-h-0">
+            <div className="w-12 sm:w-16 text-right pr-1 sm:pr-2 pt-1 text-xs sm:text-sm text-gray-500">
               {format(new Date().setHours(hour), 'h a')}
             </div>
-              <div className="flex-1 border-l py-1 px-1 min-h-0 flex flex-col justify-center">
+              <div className="flex-1 border-l py-0.5 sm:py-1 px-0.5 sm:px-1 min-h-0 flex flex-col justify-center">
                 {visibleEvents.map(event => (
                   <EventBox
                     key={event.id}
@@ -51,7 +51,7 @@ const DayPanel = ({ currentDate, events, onEventClick, allEvents }) => {
                 ))}
                 {hiddenEventsCount > 0 && (
                   <button
-                    className="text-xs text-blue-600 font-medium px-2 py-1 bg-blue-50 rounded hover:bg-blue-100 transition-colors cursor-pointer w-full text-left mt-0.5"
+                    className="text-xs text-blue-600 font-medium px-1 sm:px-2 py-0.5 sm:py-1 bg-blue-50 rounded hover:bg-blue-100 transition-colors cursor-pointer w-full text-left mt-0.5"
                     onClick={() => setShowEventList(true)}
                     aria-label={`Show ${hiddenEventsCount} more events for this hour`}
                   >
@@ -65,22 +65,22 @@ const DayPanel = ({ currentDate, events, onEventClick, allEvents }) => {
       </div>
       {/* Simple modal for mobile event list */}
       {showEventList && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-          <div className="bg-white rounded-lg shadow-xl w-11/12 max-w-md mx-auto p-4">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold">Events for {format(currentDate, 'MMMM d')}</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 p-2">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-sm mx-auto p-3 sm:p-4">
+            <div className="flex items-center justify-between mb-3 sm:mb-4">
+              <h3 className="text-base sm:text-lg font-semibold">Events for {format(currentDate, 'MMMM d')}</h3>
               <button
                 onClick={() => setShowEventList(false)}
-                className="p-2 rounded hover:bg-gray-100"
+                className="p-1 sm:p-2 rounded hover:bg-gray-100"
                 aria-label="Close event list"
               >
-                <span className="text-xl">&times;</span>
+                <span className="text-lg sm:text-xl">&times;</span>
               </button>
             </div>
             {dayEvents.length === 0 ? (
               <div className="text-gray-500 text-center">No events</div>
             ) : (
-              <ul className="space-y-2">
+              <ul className="space-y-1 sm:space-y-2">
                 {dayEvents.map(event => (
                   <li key={event.id}>
                     <button
@@ -90,7 +90,7 @@ const DayPanel = ({ currentDate, events, onEventClick, allEvents }) => {
                         onEventClick(event);
                       }}
                     >
-                      <div className="font-medium">{event.title}</div>
+                      <div className="font-medium text-sm sm:text-base">{event.title}</div>
                       <div className="text-xs text-gray-500">{event.startTime} - {event.endTime}</div>
                     </button>
                   </li>
